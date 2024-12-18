@@ -76,6 +76,9 @@ public class HandInOrder : MonoBehaviour
         {
             Destroy(obj);
         }
+
+        // GameManager.Instance.RecieveHandedInOrder(order);
+
         order.Clear();
     }
 }

@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6acf1208686fb9d4a9a23721c2eb9e21, type: 3}
+  m_Name: MenuGreen
+  m_EditorClassIdentifier: 
+  content:
+  - {fileID: 7376916294628165007, guid: 16c139aa07e70a54398ad3fbf80852ec, type: 3}
+  - {fileID: 8654013433759250121, guid: 2af6a460dbb558e4bb8c14a102ad9a33, type: 3}
+  label: MenuGreen
