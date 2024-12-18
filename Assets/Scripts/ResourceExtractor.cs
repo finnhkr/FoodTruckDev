@@ -2,9 +2,9 @@ using UnityEngine;
 using UnityEditor;
 using System.IO;
 
-public class PrefabExtractorWithMesh : MonoBehaviour
+public class PrefabExtractorWithMeshAndAvatar : MonoBehaviour
 {
-    [MenuItem("Tools/Extract Materials, Textures, FBX, and Meshes")]
+    [MenuItem("Tools/Extract Materials, Textures, FBX, Meshes, and Avatars")]
     static void ExtractPrefabDependencies()
     {
         // 获取选中的 Prefab
@@ -59,11 +59,14 @@ public class PrefabExtractorWithMesh : MonoBehaviour
         // 提取 FBX 文件和独立 Mesh
         ExtractFBXDependencies(selectedPrefab, modelsFolder, meshesFolder);
 
+        // 提取 Avatar
+        ExtractAvatarDependencies(selectedPrefab, modelsFolder);
+
         // 保存更改
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
 
-        Debug.Log("所有材质、纹理、FBX 和 Mesh 提取完成！");
+        Debug.Log("所有材质、纹理、FBX、Mesh 和 Avatar 提取完成！");
     }
 
     static void ExtractFBXDependencies(GameObject prefab, string modelsFolder, string meshesFolder)
@@ -111,6 +114,35 @@ public class PrefabExtractorWithMesh : MonoBehaviour
         else
         {
             Debug.Log($"Mesh {mesh.name} 已存在，跳过提取。");
+        }
+    }
+
+    static void ExtractAvatarDependencies(GameObject prefab, string modelsFolder)
+    {
+        Animator[] animators = prefab.GetComponentsInChildren<Animator>();
+        foreach (Animator animator in animators)
+        {
+            if (animator.avatar != null)
+            {
+                ExtractAvatar(animator.avatar, modelsFolder, animator.gameObject.name);
+            }
+        }
+    }
+
+    static void ExtractAvatar(Avatar avatar, string modelsFolder, string objectName)
+    {
+        string avatarPath = $"{modelsFolder}/{objectName}_{avatar.name}_Extracted.asset";
+
+        // 检查是否已存在，避免重复
+        if (!File.Exists(avatarPath))
+        {
+            Avatar newAvatar = Object.Instantiate(avatar);
+            AssetDatabase.CreateAsset(newAvatar, avatarPath);
+            Debug.Log($"提取完成：Avatar {avatar.name} 保存为 {avatarPath}");
+        }
+        else
+        {
+            Debug.Log($"Avatar {avatar.name} 已存在，跳过提取。");
         }
     }
 
