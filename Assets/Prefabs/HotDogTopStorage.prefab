@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4858866817380141037}
   - component: {fileID: 6635949596074132324}
   - component: {fileID: 537158988361219949}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Prop_Food_Bun_Top_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -97,7 +97,7 @@ GameObject:
   - component: {fileID: 3215590360238869227}
   - component: {fileID: 7576862801829509946}
   - component: {fileID: 3059125814054442767}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: HotDogTopStorage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -334,7 +334,7 @@ GameObject:
   - component: {fileID: 6491411108927912698}
   - component: {fileID: 3587187811806229099}
   - component: {fileID: 5345509371461994534}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Prop_Food_Bun_Top_02 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -417,7 +417,7 @@ GameObject:
   - component: {fileID: 7842438303106631441}
   - component: {fileID: 5827251252335788536}
   - component: {fileID: 1439699117903017433}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Prop_Food_Bun_Top_02 (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -500,7 +500,7 @@ GameObject:
   - component: {fileID: 2150865334462805375}
   - component: {fileID: 6965081755060205039}
   - component: {fileID: 8619895296294872604}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Prop_Food_Bun_Top_02 (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

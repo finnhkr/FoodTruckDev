@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 269039271588993126}
   - component: {fileID: 1729151515960704348}
   - component: {fileID: 3657702324467243252}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Prop_Food_Sausage_Cooked_01 (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: 2398025770049311518}
   - component: {fileID: 1377699916064313800}
   - component: {fileID: 2466085657819390445}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Prop_Food_Sausage_Cooked_01 (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -177,7 +177,7 @@ GameObject:
   - component: {fileID: 693831804381691809}
   - component: {fileID: 7157442319871945895}
   - component: {fileID: 5628605358986352725}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Prop_Food_Sausage_Cooked_01 (7)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -260,7 +260,7 @@ GameObject:
   - component: {fileID: 5388279652526013172}
   - component: {fileID: 3477873893921580967}
   - component: {fileID: 3956251392311652636}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Prop_Food_Sausage_Cooked_01 (9)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -343,7 +343,7 @@ GameObject:
   - component: {fileID: 8601558548273256326}
   - component: {fileID: 1742161135955981777}
   - component: {fileID: 2523625267799713102}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Prop_Food_Sausage_Cooked_01 (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -429,7 +429,7 @@ GameObject:
   - component: {fileID: 172936348571272179}
   - component: {fileID: 7108968177557994726}
   - component: {fileID: 5734450564084402685}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SausageStorage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -672,7 +672,7 @@ GameObject:
   - component: {fileID: 6754954892733147412}
   - component: {fileID: 5616910487768972509}
   - component: {fileID: 1760708123606052197}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Prop_Food_Sausage_Cooked_01 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -755,7 +755,7 @@ GameObject:
   - component: {fileID: 4018450928864521737}
   - component: {fileID: 3207720535793169027}
   - component: {fileID: 1604213600393156002}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Prop_Food_Sausage_Cooked_01 (8)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -838,7 +838,7 @@ GameObject:
   - component: {fileID: 8721088429516606652}
   - component: {fileID: 7467451373357225925}
   - component: {fileID: 8289645821390385285}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Prop_Food_Sausage_Cooked_01 (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -921,7 +921,7 @@ GameObject:
   - component: {fileID: 2487975945907016704}
   - component: {fileID: 4935556784721652909}
   - component: {fileID: 6917779226830097050}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Prop_Food_Sausage_Cooked_01 (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1004,7 +1004,7 @@ GameObject:
   - component: {fileID: 5842412611564963182}
   - component: {fileID: 1690964706328349347}
   - component: {fileID: 779175603915421908}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Prop_Food_Sausage_Cooked_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -45,6 +45,13 @@ public class GameManager : MonoBehaviour
 
 
 
+    [SerializeField]
+    private GameObject ui;
+
+    private GameObject startScreen;
+    private GameObject endScreen;
+
+
     // List of possible orders set in Asstes/Orders - ScriptableObjects
     // If new order added in said folder, order also needs to be in Scene -> GameManager -> Component GameManager Script -> orders
     [SerializeField]
@@ -57,7 +64,6 @@ public class GameManager : MonoBehaviour
     // List of GameObjects turned in, set by the recieveHandedInOrderFunction
     private List<GameObject> handedInFood;
 
-    // Amount of orders succesfully turned in
     private int score = 0;
 
 
@@ -69,6 +75,11 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         state = gameState.Start;
+
+        startScreen = ui.transform.Find("StartScreen").gameObject;
+        endScreen = ui.transform.Find("EndScreen").gameObject;
+
+        endScreen.SetActive(false);
     }
 
     // Update is called once per frame
@@ -77,6 +88,7 @@ public class GameManager : MonoBehaviour
         switch (state)
         {
             case gameState.Start:
+                startScreen.SetActive(true);
                 break;
 
             case gameState.CreateOrder:
@@ -92,6 +104,7 @@ public class GameManager : MonoBehaviour
                 break;
 
             case gameState.End:
+                endScreen.SetActive(true);
                 break;
 
             default:
@@ -102,18 +115,13 @@ public class GameManager : MonoBehaviour
 
     public void EvaluateOrder()
     {
-        // if condition not fully functional because order in lists could differ
-        if (currentOrder.content == handedInFood)
+        if (CompareOrders())
         {
             score += 1;
             state = gameState.CreateOrder;
         }
         else
         {
-            score = 0;
-            handedInFood = null;
-            currentOrder = null;
-
             state = gameState.End;
         }
     }
@@ -125,6 +133,14 @@ public class GameManager : MonoBehaviour
         state = gameState.EvaluateOrder;
     }
 
+    private bool CompareOrders()
+    {
+        /*
+        TODO: Implement compare method of current order and handedInFood
+        */
+
+        return false;
+    }
 
     public Order CreateRandomOrder()
     {
@@ -135,11 +151,22 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
+        startScreen.SetActive(false);
         state = gameState.CreateOrder;
     }
 
     public void ResetGame()
     {
+        score = 0;
+        currentOrder = null;
+        handedInFood.Clear();
+
+        endScreen.SetActive(false);
         state = gameState.Start;
+    }
+
+    public int getScore()
+    {
+        return score;
     }
 }

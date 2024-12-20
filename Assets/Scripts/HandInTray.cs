@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
-public class HandInOrder : MonoBehaviour
+public class HandInTray : MonoBehaviour
 {
-
     public List<GameObject> order;
     public GameObject hotDog;
 
@@ -14,19 +13,13 @@ public class HandInOrder : MonoBehaviour
     {
         order = new List<GameObject>();
 
-        XRSimpleInteractable tmp = GetComponent<XRSimpleInteractable>();
-        tmp.activated.AddListener(handingIn);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        XRGrabInteractable tmp = GetComponent<XRGrabInteractable>();
+        tmp.activated.AddListener(HandingIn);
     }
 
     public void OnCollisionEnter(Collision collision)
     {
-        
+
         if (collision.gameObject.tag == "TransformToHotDog")
         {
             order.Add(collision.gameObject);
@@ -54,7 +47,7 @@ public class HandInOrder : MonoBehaviour
                 Instantiate(hotDog, pos, rot);
             }
         }
-        
+
 
         if (collision.gameObject.tag == "Product")
         {
@@ -64,20 +57,21 @@ public class HandInOrder : MonoBehaviour
 
     public void OnCollisionExit(Collision collision)
     {
-        if (collision.gameObject.tag != "notEditable")
+        if (collision.gameObject.tag == "Product")
         {
             order.Remove(collision.gameObject);
         }
     }
 
-    public void handingIn(ActivateEventArgs args)
+    public void HandingIn(ActivateEventArgs args)
     {
         foreach (GameObject obj in order)
         {
             Destroy(obj);
         }
+        Destroy(gameObject);
 
-        // GameManager.Instance.RecieveHandedInOrder(order);
+        GameManager.Instance.RecieveHandedInOrder(order);
 
         order.Clear();
     }
