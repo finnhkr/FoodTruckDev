@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class SetScoreInUI : MonoBehaviour
+public class SetGameInfoMenu : MonoBehaviour
 {
     private int score;
     private TextMeshProUGUI text;
+    private List<string> currentOrder;
+
 
     // Start is called before the first frame update
     void Start()
     {
-        score = 0;
         text = gameObject.GetComponent<TextMeshProUGUI>();
     }
 
@@ -19,7 +20,8 @@ public class SetScoreInUI : MonoBehaviour
     void Update()
     {
         score = GameManager.Instance.GetScore();
+        currentOrder = GameManager.Instance.GetCurrentOrder();
 
-        text.text = $"You failed to hand in the last order correctly !\r\n\r\nYou priviously handed in \r\n{score}\r\norders successfully.";
+        text.text = $"Current Score:\r\n{score}\r\n\r\n\r\nCurrent Order:\r\n\r\n1x {currentOrder[0]}\r\n1x {currentOrder[1]}";
     }
 }

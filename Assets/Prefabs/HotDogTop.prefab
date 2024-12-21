@@ -47,7 +47,7 @@ GameObject:
   - component: {fileID: 4581419025783081533}
   m_Layer: 7
   m_Name: HotDogTop
-  m_TagString: Product
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

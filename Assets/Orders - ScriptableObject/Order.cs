@@ -6,7 +6,9 @@ using UnityEngine;
 [CreateAssetMenu]
 public class Order : ScriptableObject
 {
-    public List<GameObject> content;
-
     public string label;
+
+    public string hotDog;
+
+    public string drink;
 }

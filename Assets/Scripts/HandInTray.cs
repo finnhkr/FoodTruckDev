@@ -22,8 +22,6 @@ public class HandInTray : MonoBehaviour
 
         if (collision.gameObject.tag == "TransformToHotDog")
         {
-            order.Add(collision.gameObject);
-
             GameObject bottom = collision.gameObject;
             GameObject sausage = null;
             GameObject top = null;
@@ -34,7 +32,6 @@ public class HandInTray : MonoBehaviour
             }
             if (sausage.GetComponent<XRSocketInteractor>().isSelectActive)
             {
-                order.Remove(collision.gameObject);
                 top = sausage.GetComponent<XRSocketInteractor>().interactablesSelected[0].transform.gameObject;
 
                 Vector3 pos = bottom.GetComponent<Transform>().position;
@@ -65,13 +62,17 @@ public class HandInTray : MonoBehaviour
 
     public void HandingIn(ActivateEventArgs args)
     {
+        List<string> tmp = new List<string>();
+
         foreach (GameObject obj in order)
         {
+            tmp.Add(obj.name.Replace("(Clone)", ""));
+
             Destroy(obj);
         }
         Destroy(gameObject);
 
-        GameManager.Instance.RecieveHandedInOrder(order);
+        GameManager.Instance.RecieveHandedInOrder(tmp);
 
         order.Clear();
     }

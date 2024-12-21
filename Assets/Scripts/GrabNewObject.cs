@@ -25,6 +25,5 @@ public class GrabNewObject : MonoBehaviour
     {
         GameObject bottom = Instantiate(newObject, new Vector3(0,0,0), Quaternion.identity);
         intManager.SelectEnter(arg.interactorObject, bottom.GetComponent<XRGrabInteractable>());
-
     }
 }

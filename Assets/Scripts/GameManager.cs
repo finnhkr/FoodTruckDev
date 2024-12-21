@@ -1,7 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Dynamic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.XR.Interaction.Toolkit;
 
 public class GameManager : MonoBehaviour
@@ -48,21 +51,27 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private GameObject ui;
 
+    [SerializeField]
+    private GameObject gameScene;
+
     private GameObject startScreen;
     private GameObject endScreen;
+    private GameObject gameInfo;
 
 
-    // List of possible orders set in Asstes/Orders - ScriptableObjects
-    // If new order added in said folder, order also needs to be in Scene -> GameManager -> Component GameManager Script -> orders
-    [SerializeField]
-    private List<Order> orders = new List<Order>();
+    private List<string> hotDogs = new List<string>
+    {
+        "HotDog"
+    };
 
+    private List<string> drinks = new List<string>
+    {
+        "YellowDrink", "GreenDrink", "BlueDrink"
+    };
 
-    // Current order randomly set upon game state: createOrder
-    private Order currentOrder;
+    private List<string> currentOrder;
 
-    // List of GameObjects turned in, set by the recieveHandedInOrderFunction
-    private List<GameObject> handedInFood;
+    private List<string> handedInFood;
 
     private int score = 0;
 
@@ -76,10 +85,15 @@ public class GameManager : MonoBehaviour
     {
         state = gameState.Start;
 
+        currentOrder = new List<string>();
+
         startScreen = ui.transform.Find("StartScreen").gameObject;
         endScreen = ui.transform.Find("EndScreen").gameObject;
+        gameInfo = ui.transform.Find("GameInfo").gameObject;
 
         endScreen.SetActive(false);
+        gameInfo.SetActive(false);
+        gameScene.transform.Find("Spawner").gameObject.SetActive(false);
     }
 
     // Update is called once per frame
@@ -92,7 +106,7 @@ public class GameManager : MonoBehaviour
                 break;
 
             case gameState.CreateOrder:
-                currentOrder = CreateRandomOrder();
+                CreateRandomOrder();
                 state = gameState.PrepingOrder;
                 break;
 
@@ -105,6 +119,7 @@ public class GameManager : MonoBehaviour
 
             case gameState.End:
                 endScreen.SetActive(true);
+                gameScene.transform.Find("Spawner").gameObject.SetActive(false);
                 break;
 
             default:
@@ -122,11 +137,12 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            gameInfo.SetActive(false);
             state = gameState.End;
         }
     }
 
-    public void RecieveHandedInOrder(List<GameObject> tmp)
+    public void RecieveHandedInOrder(List<string> tmp)
     {
         handedInFood = tmp;
 
@@ -135,38 +151,67 @@ public class GameManager : MonoBehaviour
 
     private bool CompareOrders()
     {
-        /*
-        TODO: Implement compare method of current order and handedInFood
-        */
+        List<string> currentOrderCopy = currentOrder;
+        List<string> handedInFoodCopy = handedInFood;
 
-        return false;
+        foreach (string i in currentOrder)
+        {
+            foreach (string j in handedInFoodCopy)
+            {
+                if (i.Equals(j))
+                {
+                    handedInFoodCopy.Remove(j);
+                    currentOrderCopy.Remove(i);
+                }
+                break;
+            }
+        }
+
+        if (handedInFoodCopy.Any())
+        {
+            return false;
+        }
+        if (currentOrderCopy.Any())
+        {
+            return false;
+        }
+
+        return true;
     }
 
-    public Order CreateRandomOrder()
+    public void CreateRandomOrder()
     {
-        Order order = orders[Random.Range(0, orders.Count)];
+        currentOrder.Clear();
 
-        return order;
+        currentOrder.Add(hotDogs[Random.Range(0,hotDogs.Count)]);
+        currentOrder.Add(drinks[Random.Range(0, drinks.Count)]);
     }
 
     public void StartGame()
     {
         startScreen.SetActive(false);
+        gameInfo.SetActive(true);
+        gameScene.transform.Find("Spawner").gameObject.SetActive(true);
         state = gameState.CreateOrder;
     }
 
     public void ResetGame()
     {
         score = 0;
-        currentOrder = null;
+        currentOrder.Clear();
         handedInFood.Clear();
 
         endScreen.SetActive(false);
         state = gameState.Start;
     }
 
-    public int getScore()
+    public int GetScore()
     {
         return score;
+    }
+
+    public List<string> GetCurrentOrder()
+    {
+        return currentOrder;
     }
 }
