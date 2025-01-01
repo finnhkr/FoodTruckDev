@@ -17,6 +17,7 @@ public class HandInTray : MonoBehaviour
         tmp.activated.AddListener(HandingIn);
     }
 
+    // hotdog create, by test from the bottom bread.
     public void OnCollisionEnter(Collision collision)
     {
 

@@ -4,9 +4,10 @@ using System.Dynamic;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.XR.Interaction.Toolkit;
-
+using UnityEngine.InputSystem.XR;
 public class GameManager : MonoBehaviour
 {
     #region Singleton
@@ -58,11 +59,12 @@ public class GameManager : MonoBehaviour
     private GameObject endScreen;
     private GameObject gameInfo;
 
+    public GameObject player;
 
     private List<string> hotDogs = new List<string>
-    {
+        {
         "HotDog"
-    };
+        };
 
     private List<string> drinks = new List<string>
     {
@@ -94,6 +96,9 @@ public class GameManager : MonoBehaviour
         endScreen.SetActive(false);
         gameInfo.SetActive(false);
         gameScene.transform.Find("Spawner").gameObject.SetActive(false);
+
+        // disable User moving for start, end and etc. -> like settings?
+        // LockPlayerMovement();
     }
 
     // Update is called once per frame
@@ -102,7 +107,9 @@ public class GameManager : MonoBehaviour
         switch (state)
         {
             case gameState.Start:
-                startScreen.SetActive(true);
+                // startScreen.SetActive(true);
+                // state = gameState.CreateOrder;
+                StartGame();
                 break;
 
             case gameState.CreateOrder:
@@ -183,7 +190,7 @@ public class GameManager : MonoBehaviour
     {
         currentOrder.Clear();
 
-        currentOrder.Add(hotDogs[Random.Range(0,hotDogs.Count)]);
+        currentOrder.Add(hotDogs[Random.Range(0, hotDogs.Count)]);
         currentOrder.Add(drinks[Random.Range(0, drinks.Count)]);
     }
 
@@ -213,5 +220,22 @@ public class GameManager : MonoBehaviour
     public List<string> GetCurrentOrder()
     {
         return currentOrder;
+    }
+    // The chosen item will be used to set up the cooking challenge
+    private List<string> userSelection = new List<string>();
+    public void SetUserSelection(List<string> selections)
+    {
+        userSelection = selections;
+        Debug.Log("User Selections:" + string.Join(",", userSelection));
+    }
+    public void LockPlayerMovement()
+    {
+        player.GetComponent<TrackedPoseDriver>().enabled = false;
+        player.transform.SetLocalPositionAndRotation(new Vector3(-0.22f, 2, -0.43f), Quaternion.Euler(6, 0, 0));
+    }
+    public void UnlockPlayerMovement()
+    {
+        player.GetComponent<TrackedPoseDriver>().enabled = true;
+
     }
 }
