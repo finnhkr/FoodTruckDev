@@ -77,6 +77,11 @@ public class GameManager : MonoBehaviour
 
     private int score = 0;
 
+    // The chosen item will be used to set up the cooking challenge
+    private List<GameConstants.ProductsOption> userSelection = new List<GameConstants.ProductsOption>();
+
+    // current playmode 0->time attack 1->endless mode
+    private int modeIndex;
 
     // =====================================================================
     // =====================================================================
@@ -98,7 +103,7 @@ public class GameManager : MonoBehaviour
         gameScene.transform.Find("Spawner").gameObject.SetActive(false);
 
         // disable User moving for start, end and etc. -> like settings?
-        // LockPlayerMovement();
+        LockPlayerMovement();
     }
 
     // Update is called once per frame
@@ -107,9 +112,7 @@ public class GameManager : MonoBehaviour
         switch (state)
         {
             case gameState.Start:
-                // startScreen.SetActive(true);
-                // state = gameState.CreateOrder;
-                StartGame();
+                startScreen.SetActive(true);
                 break;
 
             case gameState.CreateOrder:
@@ -196,10 +199,12 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
-        startScreen.SetActive(false);
-        gameInfo.SetActive(true);
-        gameScene.transform.Find("Spawner").gameObject.SetActive(true);
-        state = gameState.CreateOrder;
+        // Debug for verify if correct params are passed to game manager.
+        Debug.Log($"Current Mode:{modeIndex}, Food Selections: {string.Join(", ", userSelection.Select(p => p.name))}");
+        // startScreen.SetActive(false);
+        // gameInfo.SetActive(true);
+        // gameScene.transform.Find("Spawner").gameObject.SetActive(true);
+        // state = gameState.CreateOrder;
     }
 
     public void ResetGame()
@@ -221,13 +226,19 @@ public class GameManager : MonoBehaviour
     {
         return currentOrder;
     }
-    // The chosen item will be used to set up the cooking challenge
-    private List<string> userSelection = new List<string>();
-    public void SetUserSelection(List<string> selections)
+
+    //  Set user selected food product options.
+    public void SetUserSelection(List<GameConstants.ProductsOption> selections)
     {
         userSelection = selections;
         Debug.Log("User Selections:" + string.Join(",", userSelection));
     }
+
+    public void SetPlayMode(int currentModeIndex)
+    {
+        modeIndex = currentModeIndex;
+    }
+
     public void LockPlayerMovement()
     {
         player.GetComponent<TrackedPoseDriver>().enabled = false;

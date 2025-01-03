@@ -33,6 +33,7 @@ public class HandInTray : MonoBehaviour
             }
             if (sausage.GetComponent<XRSocketInteractor>().isSelectActive)
             {
+                // if hotdog top is on top of the sausage
                 top = sausage.GetComponent<XRSocketInteractor>().interactablesSelected[0].transform.gameObject;
 
                 Vector3 pos = bottom.GetComponent<Transform>().position;
