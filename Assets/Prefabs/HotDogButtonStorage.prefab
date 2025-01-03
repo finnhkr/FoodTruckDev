@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 3175603561328626368}
   - component: {fileID: 452411937907046256}
   - component: {fileID: 1297159876469514646}
+  - component: {fileID: 2096161322164014095}
   m_Layer: 8
   m_Name: HotDogButtonStorage
   m_TagString: Untagged
@@ -31,7 +32,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
   m_LocalPosition: {x: -1.091, y: 0.9118, z: -3.641}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7947578231994025472}
@@ -157,7 +158,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   m_InteractionLayers:
-    m_Bits: 6
+    m_Bits: 2
   m_DistanceCalculationMode: 1
   m_SelectMode: 0
   m_FocusMode: 1
@@ -241,6 +242,21 @@ MonoBehaviour:
   m_OnDeactivate:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &2096161322164014095
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 108431752211722919}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4a89f9bc2320e640adf05705c6427a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  newObject: {fileID: 3741169259284224667, guid: b75eb01b3a8737a4e80f3d7a31d291fa,
+    type: 3}
+  intManager: {fileID: 0}
 --- !u!1 &3602056170343977729
 GameObject:
   m_ObjectHideFlags: 0

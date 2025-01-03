@@ -28,7 +28,6 @@ public class StartUIScript : MonoBehaviour
     // invoke from UI toggles - for products in food truck game
     public void ToggleProduct(GameConstants.ProductsOption option, bool isSelected)
     {
-        Debug.Log("Currently selected products: " + string.Join(", ", GetSelectedProductNames()));
         // select product
         if (isSelected)
         {
@@ -94,6 +93,7 @@ public class StartUIScript : MonoBehaviour
                 // As I can't extract thumbnail from prefabs, so I just use the name now.
                 // Texture2D thumbnail = AssetPreview.GetAssetPreview(option.prefab);
                 // symbolObj.GetComponent<Image>().sprite =
+                // As you can see from the StartScreen, I use the cube image instead of ingreadients' images.
             }
             else
             {
@@ -116,16 +116,16 @@ public class StartUIScript : MonoBehaviour
         if (currentMode == "Time Attack")
         {
             // 0->Time Attack
-            GameManager.Instance.SetPlayMode(GameConstants.MODE_TIMEATTACK);
+            GameManager.Instance.Playmode = GameConstants.MODE_TIMEATTACK;
         }
         else
         {
             // 1->Endless Mode
-            GameManager.Instance.SetPlayMode(GameConstants.MODE_ENDLESS);
+            GameManager.Instance.Playmode = GameConstants.MODE_ENDLESS;
         }
         List<GameConstants.ProductsOption> userSelects = selectedProducts;
         // Set User selects and pass to game manager;
-        GameManager.Instance.SetUserSelection(userSelects);
+        GameManager.Instance.FoodList = userSelects;
 
         GameManager.Instance.StartGame();
     }

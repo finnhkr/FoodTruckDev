@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 4440171912787199667}
   m_Layer: 8
   m_Name: YellowDrinkStorage
-  m_TagString: Untagged
+  m_TagString: Drink
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -250,5 +250,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4a89f9bc2320e640adf05705c6427a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  newObject: {fileID: 0}
+  newObject: {fileID: 5511227276510829436, guid: 2668caefab6ac25448e9337b8a4cec8a,
+    type: 3}
   intManager: {fileID: 0}

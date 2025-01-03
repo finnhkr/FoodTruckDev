@@ -6,6 +6,7 @@ TagManager:
   tags:
   - TransformToHotDog
   - Product
+  - Drink
   layers:
   - Default
   - TransparentFX

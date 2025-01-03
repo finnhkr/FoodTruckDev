@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 3955013831579543317}
   m_Layer: 8
   m_Name: GreenDrinkStorage
-  m_TagString: Untagged
+  m_TagString: Drink
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

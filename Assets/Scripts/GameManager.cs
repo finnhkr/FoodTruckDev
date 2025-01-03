@@ -10,7 +10,11 @@ using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.InputSystem.XR;
 public class GameManager : MonoBehaviour
 {
+
+
     #region Singleton
+
+
     private static GameManager instance;
     public static GameManager Instance
     {
@@ -40,7 +44,7 @@ public class GameManager : MonoBehaviour
     {
         Start,          // Start screen 
         CreateOrder,    // order gets randomly chosen
-        PrepingOrder,   // Playing state, where player prepares the Food requested by order
+        // PrepingOrder,   // Playing state, where player prepares the Food requested by order
         EvaluateOrder,  // Triggered by handing in an order from the player, evaluates success of player and further game state
         End,            // End screen after failing
     }
@@ -60,6 +64,8 @@ public class GameManager : MonoBehaviour
     private GameObject gameInfo;
 
     public GameObject player;
+    // Timer for generate orders
+    float orderTimer = 0f;
 
     private List<string> hotDogs = new List<string>
         {
@@ -78,10 +84,38 @@ public class GameManager : MonoBehaviour
     private int score = 0;
 
     // The chosen item will be used to set up the cooking challenge
-    private List<GameConstants.ProductsOption> userSelection = new List<GameConstants.ProductsOption>();
+    private List<GameConstants.ProductsOption> foodList = new List<GameConstants.ProductsOption>();
+
+    public List<GameConstants.ProductsOption> FoodList
+    {
+        get => foodList;
+        set
+        {
+            foodList = value ?? new List<GameConstants.ProductsOption>();
+            Debug.Log("User Selections:" + string.Join(",", foodList.Select(p => p.name)));
+        }
+    }
 
     // current playmode 0->time attack 1->endless mode
-    private int modeIndex;
+    private int currentMode;
+    public int Playmode
+    {
+        get => currentMode;
+        set
+        {
+            if (value < 0)
+            {
+                Debug.LogWarning("Invalid Playmode value, set to time attack (0) instead");
+                currentMode = GameConstants.MODE_TIMEATTACK;
+            }
+            else
+            {
+                currentMode = value;
+                Debug.Log($"PlayMode setted to: {(currentMode == GameConstants.MODE_TIMEATTACK ? "Time Attack" : "Endless Mode")}");
+            }
+
+        }
+    }
 
     // =====================================================================
     // =====================================================================
@@ -109,6 +143,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        orderTimer += Time.deltaTime;
         switch (state)
         {
             case gameState.Start:
@@ -116,12 +151,12 @@ public class GameManager : MonoBehaviour
                 break;
 
             case gameState.CreateOrder:
-                CreateRandomOrder();
-                state = gameState.PrepingOrder;
+                // Use fixedUpdate instead.
+                // CreateRandomOrder();
+                // state = gameState.PrepingOrder;
                 break;
-
-            case gameState.PrepingOrder:
-                break;
+            // case gameState.PrepingOrder:
+            //     break;
 
             case gameState.EvaluateOrder:
                 EvaluateOrder();
@@ -137,7 +172,6 @@ public class GameManager : MonoBehaviour
                 break;
         }
     }
-
     public void EvaluateOrder()
     {
         if (CompareOrders())
@@ -200,11 +234,17 @@ public class GameManager : MonoBehaviour
     public void StartGame()
     {
         // Debug for verify if correct params are passed to game manager.
-        Debug.Log($"Current Mode:{modeIndex}, Food Selections: {string.Join(", ", userSelection.Select(p => p.name))}");
-        // startScreen.SetActive(false);
-        // gameInfo.SetActive(true);
-        // gameScene.transform.Find("Spawner").gameObject.SetActive(true);
-        // state = gameState.CreateOrder;
+        Debug.Log($"Current Mode:{(currentMode == GameConstants.MODE_TIMEATTACK ? "Time Attack" : "EndlessMode")}, Food Selections: {string.Join(", ", foodList.Select(p => p.name))}");
+        // Close startScreen
+        startScreen.SetActive(false);
+        gameInfo.SetActive(true);
+        // Active Spawner and arrange the ingredients there by invoke the function SpawnIngredients
+        GameObject spawner = gameScene.transform.Find("Spawner").gameObject;
+        spawner.SetActive(true);
+        spawner.GetComponent<Spawner>().SpawnIngredients(foodList);
+        // unlock player Movement for game playing.
+        UnlockPlayerMovement();
+        state = gameState.CreateOrder;
     }
 
     public void ResetGame()
@@ -226,18 +266,7 @@ public class GameManager : MonoBehaviour
     {
         return currentOrder;
     }
-
-    //  Set user selected food product options.
-    public void SetUserSelection(List<GameConstants.ProductsOption> selections)
-    {
-        userSelection = selections;
-        Debug.Log("User Selections:" + string.Join(",", userSelection));
-    }
-
-    public void SetPlayMode(int currentModeIndex)
-    {
-        modeIndex = currentModeIndex;
-    }
+    // Lock for fixed option screen like start game screen, score screen, etc.
 
     public void LockPlayerMovement()
     {
