@@ -5,13 +5,13 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 public class HandInTray : MonoBehaviour
 {
-    public List<GameObject> order;
+    public List<GameObject> foodOnTray;
     public GameObject hotDog;
 
     // Start is called before the first frame update
     void Start()
     {
-        order = new List<GameObject>();
+        foodOnTray = new List<GameObject>();
 
         XRGrabInteractable tmp = GetComponent<XRGrabInteractable>();
         tmp.activated.AddListener(HandingIn);
@@ -21,6 +21,8 @@ public class HandInTray : MonoBehaviour
     public void OnCollisionEnter(Collision collision)
     {
 
+        // It should be change if you want to add sauce to it, but not for milistone 3;
+        // Generate hotdog;
         if (collision.gameObject.tag == "TransformToHotDog")
         {
             GameObject bottom = collision.gameObject;
@@ -50,7 +52,7 @@ public class HandInTray : MonoBehaviour
 
         if (collision.gameObject.tag == "Product")
         {
-            order.Add(collision.gameObject);
+            foodOnTray.Add(collision.gameObject);
         }
     }
 
@@ -58,7 +60,7 @@ public class HandInTray : MonoBehaviour
     {
         if (collision.gameObject.tag == "Product")
         {
-            order.Remove(collision.gameObject);
+            foodOnTray.Remove(collision.gameObject);
         }
     }
 
@@ -66,16 +68,15 @@ public class HandInTray : MonoBehaviour
     {
         List<string> tmp = new List<string>();
 
-        foreach (GameObject obj in order)
+        foreach (GameObject obj in foodOnTray)
         {
             tmp.Add(obj.name.Replace("(Clone)", ""));
-
             Destroy(obj);
         }
         Destroy(gameObject);
-
+        // Pass the name of the food on the tray to the game manager;
         GameManager.Instance.RecieveHandedInOrder(tmp);
 
-        order.Clear();
+        foodOnTray.Clear();
     }
 }

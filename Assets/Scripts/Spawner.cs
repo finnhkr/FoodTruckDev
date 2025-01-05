@@ -24,12 +24,12 @@ public class Spawner : MonoBehaviour
         int currentFoodCount = 0;
         int currentDrinkCount = 0;
         List<GameObject> assembleIngredients = selections.SelectMany(objPrefab => objPrefab.AssembledIngredientsPrefab).GroupBy(ing => ing.gameObject.name).Select(group => group.First()).ToList();
-        Debug.Log($"Current Ingredients [{assembleIngredients.Count}] {string.Join(",", assembleIngredients.Select(p => p.name))}");
+        // Debug.Log($"Current Ingredients [{assembleIngredients.Count}] {string.Join(",", assembleIngredients.Select(p => p.name))}");
         assembleIngredients.ForEach(assIng =>
             {
                 GameObject obj = Instantiate(assIng, Vector3.zero, Quaternion.Euler(0, 90, 0));
                 obj.name = obj.name.Replace("(Clone)", "");
-                Debug.Log($"Current Ingredient Assemble: {assIng.name} - {assIng.tag}");
+                // Debug.Log($"Current Ingredient Assemble: {assIng.name} - {assIng.tag}");
 
                 if (assIng.tag == "Drink")
                 {
@@ -59,5 +59,16 @@ public class Spawner : MonoBehaviour
                 }
                 obj.GetComponent<GrabNewObject>().intManager = InteractableManager;
             });
+    }
+    public void DestroyIngredients()
+    {
+        foreach (Transform child in transform.Find("Drinks").transform)
+        {
+            Destroy(child.gameObject);
+        }
+        foreach (Transform child in transform.Find("Food").transform)
+        {
+            Destroy(child.gameObject);
+        }
     }
 }

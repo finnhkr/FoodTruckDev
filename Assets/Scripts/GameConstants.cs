@@ -12,7 +12,7 @@ public class GameConstants : MonoBehaviour
         {
             if (instance == null)
             {
-                Debug.LogError("GameManager is null");
+                Debug.LogError("GameConstants is null");
             }
 
             return instance;
@@ -40,5 +40,21 @@ public class GameConstants : MonoBehaviour
         public List<GameObject> ingredientsPrefab;
         // For Spawner
         public List<GameObject> AssembledIngredientsPrefab;
+    }
+    [System.Serializable]
+    public class orderInfo
+    {
+        // identifier by using waitpoint name;
+        public string waitPointName;
+        public Dictionary<string, int> products;
+        // difficulty (for different score) - for milestone 4 - I'm tired to add it now ^.&^
+        public int difficulty;
+    }
+    public void ClearChildren(GameObject parent)
+    {
+        foreach (Transform child in parent.transform)
+        {
+            GameObject.Destroy(child.gameObject);
+        }
     }
 }
