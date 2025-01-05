@@ -101,9 +101,17 @@ public class OrderManager : MonoBehaviour
         if (pointCustomerRelation.ContainsKey(pointName))
         {
             GameObject customer = pointCustomerRelation[pointName];
+            // weird here...
+            if (customer.IsUnityNull())
+            {
+                pointCustomerRelation.Remove(pointName);
+                point.GetComponent<WaitPoint>().isOccupied = false;
+                return;
+            }
             var customerBehavior = customer.GetComponent<CustomerBehavior>();
             if (customerBehavior != null)
             {
+                pointCustomerRelation.Remove(pointName);
                 customerBehavior.LeaveFoodTruck(point);
             }
         }

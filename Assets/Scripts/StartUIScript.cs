@@ -113,7 +113,7 @@ public class StartUIScript : MonoBehaviour
     {
         Debug.Log($"Current Mode:{modeToggleGroup.ActiveToggles().ToArray()[0].gameObject.name.Trim()}");
         string currentMode = modeToggleGroup.ActiveToggles().ToArray()[0].gameObject.name.Trim();
-        if (currentMode == "Time Attack")
+        if (currentMode == "TimeMode")
         {
             // 0->Time Attack
             GameManager.Instance.Playmode = GameConstants.MODE_TIMEATTACK;

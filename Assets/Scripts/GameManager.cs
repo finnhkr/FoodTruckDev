@@ -66,7 +66,8 @@ public class GameManager : MonoBehaviour
 
     public GameObject player;
     // Timer for generate orders
-    float orderTimer = 0f;
+    // This will be reset in time mode for countdown.
+    float countdownTime = 0f;
 
     private List<string> hotDogs = new List<string>
         {
@@ -176,7 +177,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        orderTimer += Time.deltaTime;
+
         switch (state)
         {
             case gameState.Start:
@@ -203,6 +204,39 @@ public class GameManager : MonoBehaviour
             default:
                 Debug.Log("ERROR: Unknown game state: " + state);
                 break;
+        }
+    }
+    private void FixedUpdate()
+    {
+
+        if (state == gameState.CreateOrder)
+        {
+            Debug.Log($"state {state} {state == gameState.CreateOrder} mode {currentMode}");
+            if (currentMode == GameConstants.MODE_TIMEATTACK)
+            {
+                countdownTime -= Time.deltaTime;
+                // Only judge if end game when time consumed in Time attack mode;
+                if (countdownTime > 0)
+                {
+                    TextMeshProUGUI clock = gameInfo.transform.Find("Info/Clock/countDown").GetComponent<TextMeshProUGUI>();
+                    if (!clock.IsUnityNull())
+                    {
+                        int minutes = (int)(countdownTime / 60);
+                        int seconds = (int)(countdownTime % 60);
+                        clock.text = $"{minutes}: {seconds:D2}";
+                    }
+                }
+                else
+                {
+                    // EndGame when time consumed
+                    TextMeshProUGUI clock = gameInfo.transform.Find("Info/Clock/countDown").GetComponent<TextMeshProUGUI>();
+                    if (!clock.IsUnityNull())
+                    {
+                        clock.text = "0:00";
+                    }
+                    EndGame();
+                }
+            }
         }
     }
     public void EvaluateOrder()
@@ -233,8 +267,11 @@ public class GameManager : MonoBehaviour
     // Evaluate food for submission to get score;
     public void EvaluateFood(List<string> tmp)
     {
+        // Temporary list to store orders that need removal
+        List<GameConstants.orderInfo> ordersToRemove = new List<GameConstants.orderInfo>();
 
-        orderListInfo.remainingOrderList.ForEach(order =>
+        // Traves remaining order list and record it.
+        foreach (var order in orderListInfo.remainingOrderList)
         {
             foreach (string submitFood in tmp)
             {
@@ -248,23 +285,27 @@ public class GameManager : MonoBehaviour
                     }
                 }
             }
-            // If no any food request from the customer in dedicate point.
+
+            // If order finished, record to remove later;
             if (order.products.Count == 0)
             {
-                string pointName = order.waitPointName;
-                // Add score according to difficulty which is set to fixed 1 for now.
-                userScore += order.difficulty;
-                // Remove order requests from orderListInfo
-                orderListInfo.remainingOrderList.Remove(order);
-                orderListInfo.currentOrderList.RemoveAll(od => od.waitPointName == pointName);
-
-                // And then invoke to request for new customer and let current request corresponding
-                // customer go away.
-                gameInfo.GetComponent<OrderManager>().finishOrderOnPoint(pointName);
-
-
+                ordersToRemove.Add(order);
             }
-        });
+        }
+        // execute remove and leave animation together.
+        foreach (var finishedOrder in ordersToRemove)
+        {
+            string pointName = finishedOrder.waitPointName;
+            userScore += finishedOrder.difficulty;
+
+            // Remove order requests from orderListInfo
+            orderListInfo.remainingOrderList.Remove(finishedOrder);
+            orderListInfo.currentOrderList.RemoveAll(od => od.waitPointName == pointName);
+
+            // And then invoke to request for new customer and let current request corresponding
+            // customer leave wait point to exit point.
+            gameInfo.GetComponent<OrderManager>().finishOrderOnPoint(pointName);
+        }
         // Update board
         GenerateOrderBoard();
     }
@@ -280,7 +321,7 @@ public class GameManager : MonoBehaviour
         {
             // Instantiate orderContiner first, which include wait Point info
             GameObject orderInfo = Instantiate(orderContainer);
-            orderInfo.transform.SetParent(boardContainer.transform);
+            orderInfo.transform.SetParent(boardContainer.transform, false);
             // orderInfo.transform.localScale = Vector3.one;
             orderInfo.name = orderInfo.name.Replace("(Clone)", "");
             orderInfo.transform.Find("waitPoint").GetComponent<TextMeshProUGUI>().text = currentOrder.waitPointName;
@@ -350,6 +391,11 @@ public class GameManager : MonoBehaviour
 
             }
         });
+        TextMeshProUGUI scoreText = gameInfo.transform.Find("Info/Score/currentScore").GetComponent<TextMeshProUGUI>();
+        if (!scoreText.IsUnityNull())
+        {
+            scoreText.text = userScore.ToString();
+        }
     }
 
     private bool CompareOrders()
@@ -423,7 +469,10 @@ public class GameManager : MonoBehaviour
         // }
         orderListInfo.currentOrderList.Add(orderInfo);
         orderListInfo.remainingOrderList.Add(orderInfo);
+        Debug.Log($"Generate New Order in {waitPoint.name}\n\nOrder Info:\n\n{string.Join("", orderInfo.products.Select(o => $"{o.Key}*{o.Value}\n"))}");
         GenerateOrderBoard();
+        // Test order;
+        StartCoroutine(MockCompleteOrder(waitPoint.name, 3f, 8f));
     }
 
     public void StartGame()
@@ -435,9 +484,23 @@ public class GameManager : MonoBehaviour
         orderListInfo.remainingOrderList = new List<GameConstants.orderInfo>();
         // Debug for verify if correct params are passed to game manager.
         Debug.Log($"Current Mode:{(currentMode == GameConstants.MODE_TIMEATTACK ? "Time Attack" : "EndlessMode")}, Food Selections: {string.Join(", ", foodList.Select(p => p.name))}");
+
+        if (currentMode == GameConstants.MODE_TIMEATTACK)
+        {
+            // default Time 70s;
+            countdownTime = 70;
+        }
         // Close startScreen
         startScreen.SetActive(false);
         gameInfo.SetActive(true);
+        if (currentMode == GameConstants.MODE_TIMEATTACK)
+        {
+            gameInfo.transform.Find("Info/Clock").gameObject.SetActive(true);
+        }
+        else
+        {
+            gameInfo.transform.Find("Info/Clock").gameObject.SetActive(false);
+        }
         // Active Spawner and arrange the ingredients there by invoke the function SpawnIngredients
         GameObject spawner = gameScene.transform.Find("Spawner").gameObject;
         spawner.SetActive(true);
@@ -446,6 +509,13 @@ public class GameManager : MonoBehaviour
         UnlockPlayerMovement();
         // no use for now.
         state = gameState.CreateOrder;
+    }
+    // End Game
+    public void EndGame()
+    {
+        cleanUpGameScene();
+        userScore = 0;
+        state = gameState.End;
     }
     // Clean generated objects
     public void cleanUpGameScene()
@@ -493,5 +563,65 @@ public class GameManager : MonoBehaviour
     {
         player.GetComponent<TrackedPoseDriver>().enabled = true;
 
+    }
+    // ===================================================================
+    // ===================== Mock completion logic ========================
+    // ===================================================================
+
+    /// <summary>
+    /// A coroutine to simulate order completion in two steps:
+    /// 1) Partially complete the order (submit a few items).
+    /// 2) Wait for a certain amount of time, then fully complete the order.
+    /// </summary>
+    /// <param name="waitPointName">The name of the waitPoint (customer location) to mock completion</param>
+    /// <param name="partialDelay">How many seconds to wait before submitting partial items</param>
+    /// <param name="finalDelay">After partial submission, how many seconds to wait before fully completing the order</param>
+    public IEnumerator MockCompleteOrder(string waitPointName, float partialDelay = 5f, float finalDelay = 10f)
+    {
+        // Wait for partialDelay seconds, then submit a part of the order (e.g. one item)
+        yield return new WaitForSeconds(partialDelay);
+        // if not found that wait point, then return default one.
+        var targetOrder = orderListInfo.remainingOrderList.FirstOrDefault(o => o.waitPointName == waitPointName);
+        // If still have some unfinished food request in the order.
+        if (targetOrder != null && targetOrder.products.Count > 0)
+        {
+            // Take the first item from the order for partial completion
+            string firstFoodKey = targetOrder.products.Keys.First();
+
+            // For partial submission, let's only hand in one instance of that item
+            List<string> partialFoods = new List<string>() { firstFoodKey };
+
+            Debug.Log($"[MockCompleteOrder] First submission: partially submitting => {firstFoodKey}");
+            EvaluateFood(partialFoods);
+            // This will update the scoreboard via GenerateOrderBoard()
+        }
+        else
+        {
+            Debug.LogWarning($"[MockCompleteOrder] No order found at {waitPointName} for partial completion!");
+            yield break;
+        }
+        // Submit to final the order, to check the animation and logics after finish the order.
+        // Wait for finalDelay seconds, then fully complete the remaining items
+        yield return new WaitForSeconds(finalDelay);
+
+        var targetOrder2 = orderListInfo.remainingOrderList.FirstOrDefault(o => o.waitPointName == waitPointName);
+        if (targetOrder2 != null && targetOrder2.products.Count > 0)
+        {
+            // Gather all remaining items in this order
+            List<string> allRemainFoods = new List<string>();
+            foreach (var kvp in targetOrder2.products)
+            {
+                for (int i = 0; i < kvp.Value; i++)
+                {
+                    allRemainFoods.Add(kvp.Key);
+                }
+            }
+            Debug.Log($"[MockCompleteOrder] Second submission: completing all => {string.Join(",", allRemainFoods)}");
+            EvaluateFood(allRemainFoods);
+        }
+        else
+        {
+            Debug.LogWarning($"[MockCompleteOrder] No remaining order found at {waitPointName} or it's already completed.");
+        }
     }
 }

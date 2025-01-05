@@ -38,13 +38,12 @@ public class CustomerBehavior : MonoBehaviour
     // invoke for customer walk to assigned wait point
     public void WalkToWaitPoint(GameObject waitPoint)
     {
-        Debug.Log($"User for {waitPoint.name} are walking to the wait point");
+        // Debug.Log($"User for {waitPoint.name} are walking to the wait point");
         navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
         // Debug.Log($"WaitPoint {waitPoint} {waitPoint.transform.position} {navMeshAgent.IsUnityNull()}");
         navMeshAgent.SetDestination(waitPoint.transform.position);
         assignedWaitPoint = waitPoint;
         currentState = CustomerState.WalkingToWaitPoint;
-        Debug.Log("Current state " + currentState);
     }
     // leave food truck
     public void LeaveFoodTruck(GameObject leavePoint)
