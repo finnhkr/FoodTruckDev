@@ -15,14 +15,6 @@ public class UIButtonClick : MonoBehaviour
 
     public void ActionOnClick()
     {
-        if(gameObject.name == "StartScreenButton")
-        {
-            GameManager.Instance.StartGame();
-        }
-
-        if (gameObject.name == "EndScreenButton")
-        {
-            GameManager.Instance.ResetGame();
-        }
+        GameManager.Instance.returnStartScreen();
     }
 }

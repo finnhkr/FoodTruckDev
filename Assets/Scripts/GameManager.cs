@@ -136,7 +136,11 @@ public class GameManager : MonoBehaviour
         set
         {
             userScore = value;
-            scoreText.text = userScore.ToString();
+            TextMeshProUGUI scoreText = gameInfo.transform.Find("Info/Score/currentScore").GetComponent<TextMeshProUGUI>();
+            if (!scoreText.IsUnityNull())
+            {
+                scoreText.text = userScore.ToString();
+            }
         }
     }
     // Start is called before the first frame update
@@ -166,12 +170,24 @@ public class GameManager : MonoBehaviour
         endScreen = ui.transform.Find("EndScreen").gameObject;
         gameInfo = ui.transform.Find("GameInfo").gameObject;
 
-        endScreen.SetActive(false);
-        gameInfo.SetActive(false);
-        gameScene.transform.Find("Spawner").gameObject.SetActive(false);
+        returnStartScreen();
+        // endScreen.SetActive(false);
+        // gameInfo.SetActive(false);
+        // gameScene.transform.Find("Spawner").gameObject.SetActive(false);
 
-        // disable User moving for start, end and etc. -> like settings?
+        // // disable User moving for start, end and etc. -> like settings?
+        // LockPlayerMovement();
+
+    }
+    public void returnStartScreen()
+    {
+        startScreen.SetActive(true);
+        gameInfo.SetActive(false);
+        endScreen.SetActive(false);
+        gameScene.transform.Find("Spawner").gameObject.SetActive(false);
         LockPlayerMovement();
+
+
     }
 
     // Update is called once per frame
@@ -180,9 +196,9 @@ public class GameManager : MonoBehaviour
 
         switch (state)
         {
-            case gameState.Start:
-                startScreen.SetActive(true);
-                break;
+            // case gameState.Start:
+            //     startScreen.SetActive(true);
+            //     break;
 
             case gameState.CreateOrder:
                 // Use fixedUpdate instead.
@@ -196,13 +212,13 @@ public class GameManager : MonoBehaviour
             //     EvaluateOrder();
             //     break;
 
-            case gameState.End:
-                endScreen.SetActive(true);
-                gameScene.transform.Find("Spawner").gameObject.SetActive(false);
-                break;
+            // case gameState.End:
+            //     endScreen.SetActive(true);
+            //     gameScene.transform.Find("Spawner").gameObject.SetActive(false);
+            //     break;
 
             default:
-                Debug.Log("ERROR: Unknown game state: " + state);
+                // Debug.Log("ERROR: Unknown game state: " + state);
                 break;
         }
     }
@@ -211,7 +227,7 @@ public class GameManager : MonoBehaviour
 
         if (state == gameState.CreateOrder)
         {
-            Debug.Log($"state {state} {state == gameState.CreateOrder} mode {currentMode}");
+            // Debug.Log($"state {state} {state == gameState.CreateOrder} mode {currentMode}");
             if (currentMode == GameConstants.MODE_TIMEATTACK)
             {
                 countdownTime -= Time.deltaTime;
@@ -234,6 +250,7 @@ public class GameManager : MonoBehaviour
                     {
                         clock.text = "0:00";
                     }
+                    state = gameState.End;
                     EndGame();
                 }
             }
@@ -296,7 +313,7 @@ public class GameManager : MonoBehaviour
         foreach (var finishedOrder in ordersToRemove)
         {
             string pointName = finishedOrder.waitPointName;
-            userScore += finishedOrder.difficulty;
+            UserScore += finishedOrder.difficulty;
 
             // Remove order requests from orderListInfo
             orderListInfo.remainingOrderList.Remove(finishedOrder);
@@ -391,11 +408,11 @@ public class GameManager : MonoBehaviour
 
             }
         });
-        TextMeshProUGUI scoreText = gameInfo.transform.Find("Info/Score/currentScore").GetComponent<TextMeshProUGUI>();
-        if (!scoreText.IsUnityNull())
-        {
-            scoreText.text = userScore.ToString();
-        }
+        // TextMeshProUGUI scoreText = gameInfo.transform.Find("Info/Score/currentScore").GetComponent<TextMeshProUGUI>();
+        // if (!scoreText.IsUnityNull())
+        // {
+        //     scoreText.text = userScore.ToString();
+        // }
     }
 
     private bool CompareOrders()
@@ -478,7 +495,7 @@ public class GameManager : MonoBehaviour
     public void StartGame()
     {
         // Set initial score
-        userScore = 0;
+        UserScore = 0;
         // Initialize order List
         orderListInfo.currentOrderList = new List<GameConstants.orderInfo>();
         orderListInfo.remainingOrderList = new List<GameConstants.orderInfo>();
@@ -488,7 +505,7 @@ public class GameManager : MonoBehaviour
         if (currentMode == GameConstants.MODE_TIMEATTACK)
         {
             // default Time 70s;
-            countdownTime = 70;
+            countdownTime = 10;
         }
         // Close startScreen
         startScreen.SetActive(false);
@@ -496,10 +513,12 @@ public class GameManager : MonoBehaviour
         if (currentMode == GameConstants.MODE_TIMEATTACK)
         {
             gameInfo.transform.Find("Info/Clock").gameObject.SetActive(true);
+            gameInfo.transform.Find("Info/EndGame").gameObject.SetActive(false);
         }
         else
         {
             gameInfo.transform.Find("Info/Clock").gameObject.SetActive(false);
+            gameInfo.transform.Find("Info/EndGame").gameObject.SetActive(true);
         }
         // Active Spawner and arrange the ingredients there by invoke the function SpawnIngredients
         GameObject spawner = gameScene.transform.Find("Spawner").gameObject;
@@ -507,6 +526,7 @@ public class GameManager : MonoBehaviour
         spawner.GetComponent<Spawner>().SpawnIngredients(foodList);
         // unlock player Movement for game playing.
         UnlockPlayerMovement();
+        gameInfo.GetComponent<OrderManager>().StartGenerate();
         // no use for now.
         state = gameState.CreateOrder;
     }
@@ -514,8 +534,18 @@ public class GameManager : MonoBehaviour
     public void EndGame()
     {
         cleanUpGameScene();
-        userScore = 0;
-        state = gameState.End;
+        gameInfo.SetActive(false);
+        endScreen.SetActive(true);
+        Debug.Log("score" + UserScore);
+        // Present final score
+        TextMeshProUGUI finalScoreText = endScreen.transform.Find("Panel/finalScore").gameObject.GetComponent<TextMeshProUGUI>();
+        if (!finalScoreText.IsUnityNull())
+        {
+            finalScoreText.text = $"Your final Score {UserScore}";
+        }
+
+        gameScene.transform.Find("Spawner").gameObject.SetActive(false);
+        UserScore = 0;
     }
     // Clean generated objects
     public void cleanUpGameScene()
@@ -562,6 +592,8 @@ public class GameManager : MonoBehaviour
     public void UnlockPlayerMovement()
     {
         player.GetComponent<TrackedPoseDriver>().enabled = true;
+        // Why no effect here???
+        player.transform.SetLocalPositionAndRotation(new Vector3(-0.22f, 2, -0.43f), Quaternion.identity);
 
     }
     // ===================================================================

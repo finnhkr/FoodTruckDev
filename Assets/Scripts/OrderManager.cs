@@ -29,9 +29,15 @@ public class OrderManager : MonoBehaviour
     private Dictionary<string, GameObject> pointCustomerRelation = new Dictionary<string, GameObject>();
     void Start()
     {
+        // StartGenerate();
+    }
+    public void StartGenerate()
+    {
         isOnGame = true;
-        // SpawnCustomer1();
+        pointCustomerRelation.Clear();
+        waitPoints.ForEach(w => w.GetComponent<WaitPoint>().isOccupied = false);
         customerCoroutine = StartCoroutine(SpawnCustomer());
+        Debug.Log("Begin to generate customer");
     }
     // invoke by game manager when game end;
     public void StopGenerate()
@@ -39,9 +45,9 @@ public class OrderManager : MonoBehaviour
         // Stop customer generate coroutine;
         isOnGame = false;
         StopCoroutine(customerCoroutine);
-        foreach (GameObject child in customerContainer.transform)
+        foreach (Transform child in customerContainer.transform)
         {
-            Destroy(child);
+            Destroy(child.gameObject);
         }
     }
     // Use lock for there has some weird bug with it...
