@@ -18,9 +18,11 @@ public class CustomerBehavior : MonoBehaviour
         InStartPoint,
         WalkingToWaitPoint,
         WaitingForOrder,
-        WalkingToLeavePoint
+        WalkingToLeavePoint,
+        WaitingInLine
     }
     private int myID;
+    private bool onFirstRow = false;
     private static int customerCounter = 0;
     void Awake()
     {
@@ -36,7 +38,7 @@ public class CustomerBehavior : MonoBehaviour
         // currentState = CustomerState.InStartPoint;
     }
     // invoke for customer walk to assigned wait point
-    public void WalkToWaitPoint(GameObject waitPoint)
+    public void WalkToWaitPoint(GameObject waitPoint, bool isFirstRow)
     {
         // Debug.Log($"User for {waitPoint.name} are walking to the wait point");
         navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
@@ -44,6 +46,7 @@ public class CustomerBehavior : MonoBehaviour
         navMeshAgent.SetDestination(waitPoint.transform.position);
         assignedWaitPoint = waitPoint;
         currentState = CustomerState.WalkingToWaitPoint;
+        onFirstRow = isFirstRow;
     }
     // leave food truck
     public void LeaveFoodTruck(GameObject leavePoint)
@@ -81,11 +84,22 @@ public class CustomerBehavior : MonoBehaviour
                         animator.SetTrigger("ReachStandPoint");
                         // And invoke gama manager to generate order for the customer, by using the wait point to identify the customer.
                         // Debug.Log("Assigned" + assignedWaitPoint.name);
-                        GameManager.Instance.GenerateOrder(assignedWaitPoint);
-                        currentState = CustomerState.WaitingForOrder;
-                        // Set customer look at kiosk
-                        Quaternion newRotation = Quaternion.Euler(0, 180, 0);
-                        transform.rotation = newRotation;
+
+                        if (onFirstRow)
+                        {
+                            // Only order when in firstRow;
+                            // Otherwise maintain current state;
+                            GameManager.Instance.GenerateOrder(assignedWaitPoint);
+                            currentState = CustomerState.WaitingForOrder;
+                            // Set customer look at kiosk
+                            Quaternion newRotation = Quaternion.Euler(0, 180, 0);
+                            transform.rotation = newRotation;
+                        } else {
+                            currentState = CustomerState.WaitingInLine;
+                            return ;
+                        }
+
+
                         break;
                     case CustomerState.WaitingForOrder:
                         break;
@@ -96,6 +110,8 @@ public class CustomerBehavior : MonoBehaviour
                     case CustomerState.InStartPoint:
                         // Not evalutate the navMeshAgent at the starting point, otherwise it will stop at the intiial point
                         Debug.Log($"Current In startPoint {assignedWaitPoint.name}");
+                        return;
+                    case CustomerState.WaitingInLine:
                         return;
                     default:
                         break;
