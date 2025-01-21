@@ -187,7 +187,7 @@ public class GameManager : MonoBehaviour
         gameInfo.SetActive(false);
         endScreen.SetActive(false);
         gameScene.transform.Find("Spawner").gameObject.SetActive(false);
-        LockPlayerMovement();
+        //LockPlayerMovement();
 
 
     }
@@ -529,7 +529,7 @@ public class GameManager : MonoBehaviour
         spawner.SetActive(true);
         spawner.GetComponent<Spawner>().SpawnIngredients(foodList);
         // unlock player Movement for game playing.
-        UnlockPlayerMovement();
+        //UnlockPlayerMovement();
         gameInfo.GetComponent<OrderManager>().StartGenerate();
         // no use for now.
         state = gameState.CreateOrder;
