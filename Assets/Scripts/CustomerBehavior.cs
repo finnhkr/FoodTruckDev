@@ -93,16 +93,14 @@ public class CustomerBehavior : MonoBehaviour
                             // Otherwise maintain current state;
                             GameManager.Instance.GenerateOrder(assignedWaitPoint);
                             currentState = CustomerState.WaitingForOrder;
-                            // Set customer look at kiosk
-                            Quaternion newRotation = Quaternion.Euler(0, 180, 0);
-                            transform.rotation = newRotation;
-                        }
-                        else
-                        {
+                        } else {
                             currentState = CustomerState.WaitingInLine;
                             return;
                         }
 
+                        // Rotate the customer to look at the kiosk
+                        Quaternion newRotation = Quaternion.Euler(0, 180, 0);
+                        transform.rotation = newRotation;
 
                         break;
                     case CustomerState.WaitingForOrder:
