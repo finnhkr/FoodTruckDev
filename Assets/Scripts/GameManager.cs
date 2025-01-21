@@ -8,6 +8,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.InputSystem.XR;
+using UnityEngine.UI;
 using TMPro;
 public class GameManager : MonoBehaviour
 {
@@ -178,6 +179,7 @@ public class GameManager : MonoBehaviour
         // // disable User moving for start, end and etc. -> like settings?
         // LockPlayerMovement();
 
+
     }
     public void returnStartScreen()
     {
@@ -331,6 +333,8 @@ public class GameManager : MonoBehaviour
     {
         // Delete all current order list;
         GameObject boardContainer = gameInfo.transform.Find("OrderBoard").Find("Viewport/Content").gameObject;
+        LayoutRebuilder.ForceRebuildLayoutImmediate(gameInfo.transform.Find("OrderBoard").gameObject.GetComponent<RectTransform>());
+        LayoutRebuilder.ForceRebuildLayoutImmediate(boardContainer.GetComponent<RectTransform>());
         GameConstants.Instance.ClearChildren(boardContainer);
         // traverse through current order to generate order board;
         // Debug.Log($"Is orderList currentOrder emtpy {orderListInfo.currentOrderList.IsUnityNull()}");

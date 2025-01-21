@@ -27,13 +27,14 @@ public class CustomerBehavior : MonoBehaviour
     void Awake()
     {
         myID = customerCounter++;
+        animator = GetComponent<Animator>();
     }
 
     private CustomerState currentState = CustomerState.InStartPoint;
     void Start()
     {
         Debug.Log($"Customer #{myID} - Start()");
-        animator = GetComponent<Animator>();
+
         // This is so weird that state switch back to instartpoint after invoke WalkToWaitPoint???
         // currentState = CustomerState.InStartPoint;
     }
@@ -44,6 +45,7 @@ public class CustomerBehavior : MonoBehaviour
         navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
         // Debug.Log($"WaitPoint {waitPoint} {waitPoint.transform.position} {navMeshAgent.IsUnityNull()}");
         navMeshAgent.SetDestination(waitPoint.transform.position);
+        animator.SetTrigger("FinishOrder");
         assignedWaitPoint = waitPoint;
         currentState = CustomerState.WalkingToWaitPoint;
         onFirstRow = isFirstRow;
@@ -94,9 +96,11 @@ public class CustomerBehavior : MonoBehaviour
                             // Set customer look at kiosk
                             Quaternion newRotation = Quaternion.Euler(0, 180, 0);
                             transform.rotation = newRotation;
-                        } else {
+                        }
+                        else
+                        {
                             currentState = CustomerState.WaitingInLine;
-                            return ;
+                            return;
                         }
 
 

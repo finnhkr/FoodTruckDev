@@ -36,7 +36,8 @@ public class OrderManager : MonoBehaviour
     private Dictionary<string, GameObject> pointCustomerRelation = new Dictionary<string, GameObject>();
     void Start()
     {
-         StartGenerate();
+        // invoked in GameManager.cs, so don't invoke it here;
+        // StartGenerate();
     }
     public void StartGenerate()
     {
@@ -45,7 +46,7 @@ public class OrderManager : MonoBehaviour
         // Reset all occupied points;
         foreach (var row in waitPoints)
         {
-            foreach(var wp in row.waitPoints)
+            foreach (var wp in row.waitPoints)
             {
                 var wpt = wp.GetComponent<WaitPoint>();
                 if (wpt) wpt.isOccupied = false;
@@ -75,45 +76,58 @@ public class OrderManager : MonoBehaviour
     IEnumerator SpawnCustomer()
     {
         Debug.Log("Begin Generating Customer");
+
         while (isOnGame)
         {
-//            GameObject availablePoint;
-            // Lock waiting 
+            // Get all freePoints here
+            List<(GameObject rowWp, int index)> freePoints = new List<(GameObject, int)>();
+
             lock (waitPointLock)
             {
-                // generate customer for un-occupied spaces;
+                // traverse through all waitPointRows;
                 foreach (var row in waitPoints)
                 {
                     for (int i = 0; i < row.waitPoints.Count; i++)
                     {
-                        GameObject wp = row.waitPoints[i];
+                        var wp = row.waitPoints[i];
                         var wpt = wp.GetComponent<WaitPoint>();
                         if (wpt == null) continue;
-                        // Generate customer if no one here
+
                         if (!wpt.isOccupied)
                         {
-                            GameObject prefab = customerPrefabs[Random.Range(0, customerPrefabs.Count)];
-                            GameObject newCustomer = Instantiate(prefab, startPoint.transform.position, Quaternion.Euler(0, 90, 0));
-                            newCustomer.name = newCustomer.name.Replace("(Clone)", "_" + currentCustomerIndex++);
-
-                            // Let customer walk to the point;
-                            var customerBehavior = newCustomer.GetComponent<CustomerBehavior>();
-                            if (customerBehavior != null)
-                            {
-                                customerBehavior.WalkToWaitPoint(wp, i == 0);
-                            }
+                            // Set occupied
                             wpt.isOccupied = true;
-                            // Add relations to pointCustomerRelation
-                            pointCustomerRelation[wpt.name] = newCustomer;
 
+                            // Log this point for generate customer later;
+                            freePoints.Add((wp, i));
                         }
-
                     }
                 }
-
             }
-            // Generate next customer after 1~1.5 seconds.
-            yield return new WaitForSeconds(Random.Range(0.2f, 0.3f));
+
+            // Generate customers here, while not influce the lock
+            foreach (var fp in freePoints)
+            {
+                GameObject wp = fp.rowWp;
+                int idx = fp.index;
+
+                GameObject prefab = customerPrefabs[Random.Range(0, customerPrefabs.Count)];
+                GameObject newCustomer = Instantiate(prefab, startPoint.transform.position, Quaternion.Euler(0, 90, 0));
+                newCustomer.name = newCustomer.name.Replace("(Clone)", "_" + currentCustomerIndex++);
+
+                var customerBehavior = newCustomer.GetComponent<CustomerBehavior>();
+                if (customerBehavior != null)
+                {
+                    customerBehavior.WalkToWaitPoint(wp, idx == 0);
+                }
+                pointCustomerRelation[wp.name] = newCustomer;
+
+                // generate delay;
+                yield return new WaitForSeconds(1f);
+            }
+
+            // wait for next round;
+            yield return new WaitForSeconds(Random.Range(1f, 1.5f));
         }
     }
     public void finishOrderOnPoint(string pointName)
@@ -134,13 +148,13 @@ public class OrderManager : MonoBehaviour
         if (targetRow == null || targetIndex < 0)
         {
             Debug.LogWarning($"Unable to find point {pointName}");
-            return ;
+            return;
         }
         // In my logic, the customer in the front of the line can order, so for point that not in the first row is unexpected;
         if (targetIndex != 0)
         {
             Debug.LogWarning($"Unexpected finished order : {pointName}");
-            return ;
+            return;
         }
         // Get the customer of the specific point
         if (pointCustomerRelation.TryGetValue(pointName, out GameObject frontCustomer))
@@ -152,6 +166,7 @@ public class OrderManager : MonoBehaviour
                 if (cb != null)
                 {
                     // Let customer walk to the leavePoint;
+                    cb.transform.LookAt(targetRow.leavePoint.transform.position);
                     cb.LeaveFoodTruck(targetRow.leavePoint);
                 }
             }
@@ -196,27 +211,27 @@ public class OrderManager : MonoBehaviour
             }
         }
 
-//        GameObject point = waitPoints.Find(p => p.name == pointName);
-//        // trigger leave animation first;
-//        if (pointCustomerRelation.ContainsKey(pointName))
-//        {
-//            GameObject customer = pointCustomerRelation[pointName];
-//            // weird here...
-//            if (customer.IsUnityNull())
-//            {
-//                pointCustomerRelation.Remove(pointName);
-//                point.GetComponent<WaitPoint>().isOccupied = false;
-//                return;
-//            }
-//            var customerBehavior = customer.GetComponent<CustomerBehavior>();
-//            if (customerBehavior != null)
-//            {
-//                pointCustomerRelation.Remove(pointName);
-//                customerBehavior.LeaveFoodTruck(point);
-//            }
-//        }
-//        // Then set that point as not occupied.
-//        point.GetComponent<WaitPoint>().isOccupied = false;
+        //        GameObject point = waitPoints.Find(p => p.name == pointName);
+        //        // trigger leave animation first;
+        //        if (pointCustomerRelation.ContainsKey(pointName))
+        //        {
+        //            GameObject customer = pointCustomerRelation[pointName];
+        //            // weird here...
+        //            if (customer.IsUnityNull())
+        //            {
+        //                pointCustomerRelation.Remove(pointName);
+        //                point.GetComponent<WaitPoint>().isOccupied = false;
+        //                return;
+        //            }
+        //            var customerBehavior = customer.GetComponent<CustomerBehavior>();
+        //            if (customerBehavior != null)
+        //            {
+        //                pointCustomerRelation.Remove(pointName);
+        //                customerBehavior.LeaveFoodTruck(point);
+        //            }
+        //        }
+        //        // Then set that point as not occupied.
+        //        point.GetComponent<WaitPoint>().isOccupied = false;
     }
 
 }

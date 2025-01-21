@@ -85,7 +85,7 @@ public class StartUIScript : MonoBehaviour
             // Get toggle component -> then get Content -> Text, and Content->symbol for text and image.
             Toggle toggle = toggleObj.GetComponent<Toggle>();
             toggleObj.GetComponentInChildren<TMP_Text>().text = option.name;
-            toggle.isOn = false;
+            toggle.isOn = true;
             Transform symbolObj = toggleObj.GetComponent<Transform>().Find("Content/Symbol");
             if (symbolObj)
             {
@@ -105,6 +105,8 @@ public class StartUIScript : MonoBehaviour
             {
                 ToggleProduct(currentOption, isOn);
             });
+            // Add all products by default;
+            selectedProducts.Add(option);
         }
         // StartGame Button
         StartGameButton.onClick.AddListener(OnStartGame);
