@@ -289,7 +289,7 @@ public class GameManager : MonoBehaviour
         // Temporary list to store orders that need removal
         List<GameConstants.orderInfo> ordersToRemove = new List<GameConstants.orderInfo>();
 
-        // Traves remaining order list and record it.
+        // Traves? remaining order list and record it. //what does traves mean??
         foreach (var order in orderListInfo.remainingOrderList)
         {
             foreach (string submitFood in tmp)
@@ -300,6 +300,7 @@ public class GameManager : MonoBehaviour
                     // If current food request be fulfilled, then remove it.
                     if (order.products[submitFood] <= 0)
                     {
+                        currentScore += 10 //need to differentiate score by food turned in
                         order.products.Remove(submitFood);
                     }
                 }
