@@ -87,6 +87,10 @@ public class CustomerBehavior : MonoBehaviour
                         // And invoke gama manager to generate order for the customer, by using the wait point to identify the customer.
                         // Debug.Log("Assigned" + assignedWaitPoint.name);
 
+                        // Rotate the customer to look at the kiosk
+                        Quaternion newRotation = Quaternion.Euler(0, 180, 0);
+                        transform.rotation = newRotation;
+
                         if (onFirstRow)
                         {
                             // Only order when in firstRow;
@@ -97,10 +101,6 @@ public class CustomerBehavior : MonoBehaviour
                             currentState = CustomerState.WaitingInLine;
                             return;
                         }
-
-                        // Rotate the customer to look at the kiosk
-                        Quaternion newRotation = Quaternion.Euler(0, 180, 0);
-                        transform.rotation = newRotation;
 
                         break;
                     case CustomerState.WaitingForOrder:
