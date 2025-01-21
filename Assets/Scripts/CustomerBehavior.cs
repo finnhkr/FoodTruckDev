@@ -45,7 +45,8 @@ public class CustomerBehavior : MonoBehaviour
         navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
         // Debug.Log($"WaitPoint {waitPoint} {waitPoint.transform.position} {navMeshAgent.IsUnityNull()}");
         navMeshAgent.SetDestination(waitPoint.transform.position);
-        animator.SetTrigger("FinishOrder");
+        Debug.Log($"customer{waitPoint.name} trigger here");
+        animator.SetBool("Walk", true);
         assignedWaitPoint = waitPoint;
         currentState = CustomerState.WalkingToWaitPoint;
         onFirstRow = isFirstRow;
@@ -56,7 +57,7 @@ public class CustomerBehavior : MonoBehaviour
         Debug.Log("Call Leave FoodTruck");
         currentState = CustomerState.WalkingToLeavePoint;
         // Trigger finish order to walk animation.
-        animator.SetTrigger("FinishOrder");
+        animator.SetBool("Walk", true);
         navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
         navMeshAgent.SetDestination(leavePoint.transform.position);
     }
@@ -81,9 +82,12 @@ public class CustomerBehavior : MonoBehaviour
                     case CustomerState.WalkingToWaitPoint:
                         // Debug.Log($"User leave {assignedWaitPoint.name}");
                         // Clear current path, to made it fully stopped;
-                        navMeshAgent.ResetPath();
+                     
+                        navMeshAgent.isStopped = true;
                         // switch to idle animation for order;
-                        animator.SetTrigger("ReachStandPoint");
+                        
+                        
+                        animator.SetBool("Idle", true);
                         // And invoke gama manager to generate order for the customer, by using the wait point to identify the customer.
                         // Debug.Log("Assigned" + assignedWaitPoint.name);
 

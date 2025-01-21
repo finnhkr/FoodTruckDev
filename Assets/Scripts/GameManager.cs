@@ -186,7 +186,7 @@ public class GameManager : MonoBehaviour
         startScreen.SetActive(true);
         gameInfo.SetActive(false);
         endScreen.SetActive(false);
-        gameScene.transform.Find("Spawner").gameObject.SetActive(false);
+        gameScene.transform.Find("Spawner").gameObject.SetActive(true);
         //LockPlayerMovement();
 
 
@@ -492,7 +492,7 @@ public class GameManager : MonoBehaviour
         Debug.Log($"Generate New Order in {waitPoint.name}\n\nOrder Info:\n\n{string.Join("", orderInfo.products.Select(o => $"{o.Key}*{o.Value}\n"))}");
         GenerateOrderBoard();
         // Test order;
-        StartCoroutine(MockCompleteOrder(waitPoint.name, 3f, 8f));
+        // StartCoroutine(MockCompleteOrder(waitPoint.name, 3f, 8f));
     }
 
     public void StartGame()
