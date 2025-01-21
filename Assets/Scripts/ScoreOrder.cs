@@ -6,9 +6,13 @@ public class HandInZone : MonoBehaviour
 {
     private void OnTriggerEnter(Collider other)
     {
-        GameManager.Instance.HandingIn(other);
+        // Extract object name and pass it to GameManager
+        string objectName = other.gameObject.name.Replace("(Clone)", "");
+        List<string> objectsToHandIn = new List<string> { objectName };
 
-        //Destroy(other.gameObject);
+        GameManager.Instance.RecieveHandedInOrder(objectsToHandIn);
+
+        Destroy(other.gameObject);
 
         Debug.Log($"Object '{objectName}' handed in and scored!");
     }

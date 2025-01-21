@@ -279,8 +279,6 @@ public class GameManager : MonoBehaviour
         // invoke to process current submit order;
         EvaluateFood(tmp);
 
-
-
         // state = gameState.EvaluateOrder;
     }
     // Evaluate food for submission to get score;
@@ -300,7 +298,7 @@ public class GameManager : MonoBehaviour
                     // If current food request be fulfilled, then remove it.
                     if (order.products[submitFood] <= 0)
                     {
-                        currentScore += 10 //need to differentiate score by food turned in
+                        UserScore += 10; //need to differentiate score by food turned in
                         order.products.Remove(submitFood);
                     }
                 }
