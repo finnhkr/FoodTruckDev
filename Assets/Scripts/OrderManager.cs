@@ -113,6 +113,7 @@ public class OrderManager : MonoBehaviour
 
                 GameObject prefab = customerPrefabs[Random.Range(0, customerPrefabs.Count)];
                 GameObject newCustomer = Instantiate(prefab, startPoint.transform.position, Quaternion.Euler(0, 90, 0));
+                newCustomer.transform.SetParent(customerContainer.transform, true);
                 newCustomer.name = newCustomer.name.Replace("(Clone)", "_" + currentCustomerIndex++);
 
                 var customerBehavior = newCustomer.GetComponent<CustomerBehavior>();

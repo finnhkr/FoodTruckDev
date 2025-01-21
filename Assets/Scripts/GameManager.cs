@@ -509,7 +509,7 @@ public class GameManager : MonoBehaviour
         if (currentMode == GameConstants.MODE_TIMEATTACK)
         {
             // default Time 70s;
-            countdownTime = 10;
+            countdownTime = 50;
         }
         // Close startScreen
         startScreen.SetActive(false);
