@@ -53,13 +53,21 @@ public class GameManager : MonoBehaviour
 
     private gameState state;
 
-
-
     [SerializeField]
     private GameObject ui;
 
     [SerializeField]
     private GameObject gameScene;
+
+    //audio file references
+    [SerializeField] 
+    private AudioSource gameStartAudioSource;
+    [SerializeField] 
+    private AudioSource gainPointsAudioSource;
+    [SerializeField] 
+    private AudioSource losePointsAudioSource;
+    [SerializeField] 
+    private AudioSource gameEndAudioSource;
 
     private GameObject startScreen;
     private GameObject endScreen;
@@ -262,7 +270,7 @@ public class GameManager : MonoBehaviour
     {
         if (CompareOrders())
         {
-            score += 1;
+            //score += 1; //not sure if this still updates score?
             state = gameState.CreateOrder;
         }
         else
@@ -287,7 +295,7 @@ public class GameManager : MonoBehaviour
         // Temporary list to store orders that need removal
         List<GameConstants.orderInfo> ordersToRemove = new List<GameConstants.orderInfo>();
 
-        // Traves? remaining order list and record it. //what does traves mean??
+        // Traves remaining order list and record it. //what does traves mean??
         foreach (var order in orderListInfo.remainingOrderList)
         {
             foreach (string submitFood in tmp)
@@ -298,8 +306,12 @@ public class GameManager : MonoBehaviour
                     // If current food request be fulfilled, then remove it.
                     if (order.products[submitFood] <= 0)
                     {
-                        UserScore += 10; //need to differentiate score by food turned in
+                        UserScore += 25; //maybe need to differentiate score by food turned in?
+                        gainPointsAudioSource.Play();
                         order.products.Remove(submitFood);
+                    } else { //the turned in object does NOT fufill a current order
+                        UserScore -= 15;
+                        losePointsAudioSource.Play();
                     }
                 }
             }
@@ -492,7 +504,7 @@ public class GameManager : MonoBehaviour
         Debug.Log($"Generate New Order in {waitPoint.name}\n\nOrder Info:\n\n{string.Join("", orderInfo.products.Select(o => $"{o.Key}*{o.Value}\n"))}");
         GenerateOrderBoard();
         // Test order;
-        StartCoroutine(MockCompleteOrder(waitPoint.name, 3f, 8f));
+        //StartCoroutine(MockCompleteOrder(waitPoint.name, 3f, 8f));
     }
 
     public void StartGame()
@@ -505,6 +517,8 @@ public class GameManager : MonoBehaviour
         // Debug for verify if correct params are passed to game manager.
         Debug.Log($"Current Mode:{(currentMode == GameConstants.MODE_TIMEATTACK ? "Time Attack" : "EndlessMode")}, Food Selections: {string.Join(", ", foodList.Select(p => p.name))}");
 
+        gameStartAudioSource.Play();
+
         if (currentMode == GameConstants.MODE_TIMEATTACK)
         {
             // default Time 70s;
@@ -513,16 +527,16 @@ public class GameManager : MonoBehaviour
         // Close startScreen
         startScreen.SetActive(false);
         gameInfo.SetActive(true);
+
         if (currentMode == GameConstants.MODE_TIMEATTACK)
         {
             gameInfo.transform.Find("Info/Clock").gameObject.SetActive(true);
             gameInfo.transform.Find("Info/EndGame").gameObject.SetActive(false);
-        }
-        else
-        {
+        } else {
             gameInfo.transform.Find("Info/Clock").gameObject.SetActive(false);
             gameInfo.transform.Find("Info/EndGame").gameObject.SetActive(true);
         }
+
         // Active Spawner and arrange the ingredients there by invoke the function SpawnIngredients
         GameObject spawner = gameScene.transform.Find("Spawner").gameObject;
         spawner.SetActive(true);
@@ -540,12 +554,15 @@ public class GameManager : MonoBehaviour
         gameInfo.SetActive(false);
         endScreen.SetActive(true);
         Debug.Log("score" + UserScore);
+
         // Present final score
         TextMeshProUGUI finalScoreText = endScreen.transform.Find("Panel/finalScore").gameObject.GetComponent<TextMeshProUGUI>();
         if (!finalScoreText.IsUnityNull())
         {
             finalScoreText.text = $"Your final Score {UserScore}";
         }
+
+        gameEndAudioSource.Play();
 
         gameScene.transform.Find("Spawner").gameObject.SetActive(false);
         UserScore = 0;
