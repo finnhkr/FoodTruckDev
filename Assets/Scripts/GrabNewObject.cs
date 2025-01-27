@@ -19,10 +19,15 @@ public class GrabNewObject : MonoBehaviour
         {
             intManager = manager;
         }
-
+        if (interactable != null)
+        {
+            // Remove the listener first to prevent multiple listeners if it already realized;
+            interactable.selectEntered.RemoveListener(grabNewObject);
+        }
         interactable = GetComponent<XRSimpleInteractable>();
         if (interactable != null)
         {
+
             interactable.selectEntered.AddListener(grabNewObject);
         }
     }
