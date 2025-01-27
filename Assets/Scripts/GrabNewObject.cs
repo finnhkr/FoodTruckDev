@@ -15,15 +15,21 @@ public class GrabNewObject : MonoBehaviour
     }
     public void Initialize(XRInteractionManager manager = null)
     {
-        if (manager == null)
+        if (manager != null)
         {
             intManager = manager;
         }
+
         interactable = GetComponent<XRSimpleInteractable>();
         if (interactable != null)
         {
             interactable.selectEntered.AddListener(grabNewObject);
         }
+    }
+    private void OnDisable()
+    {
+        if (interactable != null)
+            interactable.selectEntered.RemoveListener(grabNewObject);
     }
 
     public void grabNewObject(SelectEnterEventArgs arg)
