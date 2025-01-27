@@ -60,13 +60,13 @@ public class GameManager : MonoBehaviour
     private GameObject gameScene;
 
     //audio file references
-    [SerializeField] 
+    [SerializeField]
     private AudioSource gameStartAudioSource;
-    [SerializeField] 
+    [SerializeField]
     private AudioSource gainPointsAudioSource;
-    [SerializeField] 
+    [SerializeField]
     private AudioSource losePointsAudioSource;
-    [SerializeField] 
+    [SerializeField]
     private AudioSource gameEndAudioSource;
 
     private GameObject startScreen;
@@ -78,15 +78,6 @@ public class GameManager : MonoBehaviour
     // This will be reset in time mode for countdown.
     float countdownTime = 0f;
 
-    private List<string> hotDogs = new List<string>
-        {
-        "HotDog"
-        };
-
-    private List<string> drinks = new List<string>
-    {
-        "YellowDrink", "GreenDrink", "BlueDrink"
-    };
 
     private List<string> currentOrder;
     // latest one for currentOrders.
@@ -101,9 +92,6 @@ public class GameManager : MonoBehaviour
     // Current orders - include order list for display and remaining for compare;
     private OrderList orderListInfo = new OrderList();
     private List<string> handedInFood;
-
-    private int score = 0;
-
     // The chosen item will be used to set up the cooking challenge
     private List<GameConstants.ProductsOption> foodList = new List<GameConstants.ProductsOption>();
 
@@ -200,44 +188,11 @@ public class GameManager : MonoBehaviour
 
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-        switch (state)
-        {
-            // case gameState.Start:
-            //     startScreen.SetActive(true);
-            //     break;
-
-            case gameState.CreateOrder:
-                // Use fixedUpdate instead.
-                // CreateRandomOrder();
-                // state = gameState.PrepingOrder;
-                break;
-            // case gameState.PrepingOrder:
-            //     break;
-
-            // case gameState.EvaluateOrder:
-            //     EvaluateOrder();
-            //     break;
-
-            // case gameState.End:
-            //     endScreen.SetActive(true);
-            //     gameScene.transform.Find("Spawner").gameObject.SetActive(false);
-            //     break;
-
-            default:
-                // Debug.Log("ERROR: Unknown game state: " + state);
-                break;
-        }
-    }
     private void FixedUpdate()
     {
 
         if (state == gameState.CreateOrder)
         {
-            // Debug.Log($"state {state} {state == gameState.CreateOrder} mode {currentMode}");
             if (currentMode == GameConstants.MODE_TIMEATTACK)
             {
                 countdownTime -= Time.deltaTime;
@@ -264,19 +219,6 @@ public class GameManager : MonoBehaviour
                     EndGame();
                 }
             }
-        }
-    }
-    public void EvaluateOrder()
-    {
-        if (CompareOrders())
-        {
-            //score += 1; //not sure if this still updates score?
-            state = gameState.CreateOrder;
-        }
-        else
-        {
-            gameInfo.SetActive(false);
-            state = gameState.End;
         }
     }
     // Get food name list for submit.
@@ -309,7 +251,9 @@ public class GameManager : MonoBehaviour
                         UserScore += 25; //maybe need to differentiate score by food turned in?
                         gainPointsAudioSource.Play();
                         order.products.Remove(submitFood);
-                    } else { //the turned in object does NOT fufill a current order
+                    }
+                    else
+                    { //the turned in object does NOT fufill a current order
                         UserScore -= 15;
                         losePointsAudioSource.Play();
                     }
@@ -430,43 +374,7 @@ public class GameManager : MonoBehaviour
         // }
     }
 
-    private bool CompareOrders()
-    {
-        List<string> currentOrderCopy = currentOrder;
-        List<string> handedInFoodCopy = handedInFood;
 
-        foreach (string i in currentOrder)
-        {
-            foreach (string j in handedInFoodCopy)
-            {
-                if (i.Equals(j))
-                {
-                    handedInFoodCopy.Remove(j);
-                    currentOrderCopy.Remove(i);
-                }
-                break;
-            }
-        }
-
-        if (handedInFoodCopy.Any())
-        {
-            return false;
-        }
-        if (currentOrderCopy.Any())
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    public void CreateRandomOrder()
-    {
-        currentOrder.Clear();
-
-        currentOrder.Add(hotDogs[Random.Range(0, hotDogs.Count)]);
-        currentOrder.Add(drinks[Random.Range(0, drinks.Count)]);
-    }
 
     public void GenerateOrder(GameObject waitPoint)
     {
@@ -504,7 +412,7 @@ public class GameManager : MonoBehaviour
         Debug.Log($"Generate New Order in {waitPoint.name}\n\nOrder Info:\n\n{string.Join("", orderInfo.products.Select(o => $"{o.Key}*{o.Value}\n"))}");
         GenerateOrderBoard();
         // Test order;
-        // StartCoroutine(MockCompleteOrder(waitPoint.name, 3f, 8f));
+        StartCoroutine(MockCompleteOrder(waitPoint.name, 3f, 8f));
     }
 
     public void StartGame()
@@ -532,7 +440,9 @@ public class GameManager : MonoBehaviour
         {
             gameInfo.transform.Find("Info/Clock").gameObject.SetActive(true);
             gameInfo.transform.Find("Info/EndGame").gameObject.SetActive(false);
-        } else {
+        }
+        else
+        {
             gameInfo.transform.Find("Info/Clock").gameObject.SetActive(false);
             gameInfo.transform.Find("Info/EndGame").gameObject.SetActive(true);
         }
@@ -546,6 +456,8 @@ public class GameManager : MonoBehaviour
         gameInfo.GetComponent<OrderManager>().StartGenerate();
         // no use for now.
         state = gameState.CreateOrder;
+        // Clear the order Board;
+        GenerateOrderBoard();
     }
     // End Game
     public void EndGame()
@@ -579,23 +491,6 @@ public class GameManager : MonoBehaviour
         orderListInfo.remainingOrderList.Clear();
 
     }
-
-
-    public void ResetGame()
-    {
-        score = 0;
-        currentOrder.Clear();
-        handedInFood.Clear();
-
-        endScreen.SetActive(false);
-        state = gameState.Start;
-    }
-
-    public int GetScore()
-    {
-        return score;
-    }
-
     public List<string> GetCurrentOrder()
     {
         return currentOrder;
