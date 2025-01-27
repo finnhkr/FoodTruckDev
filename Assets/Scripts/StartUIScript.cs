@@ -68,9 +68,8 @@ public class StartUIScript : MonoBehaviour
             // 1->Endless Mode
             GameManager.Instance.Playmode = GameConstants.MODE_ENDLESS;
         }
-        List<GameConstants.ProductsOption> userSelects = productOptions;
         // Set User selects and pass to game manager;
-        GameManager.Instance.FoodList = userSelects;
+        GameManager.Instance.FoodList = productOptions;
 
         GameManager.Instance.StartGame();
     }

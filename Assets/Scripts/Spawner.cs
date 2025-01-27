@@ -57,7 +57,8 @@ public class Spawner : MonoBehaviour
                     // For food stuff, Start Placement Position is 0.45 0.91 1.3, Placement Interval for X-axis is 0.47
                     obj.transform.SetLocalPositionAndRotation(new Vector3(0.45f + 0.47f * currentFoodCount++, 0.91f, 1.3f), Quaternion.Euler(0, 90, 0));
                 }
-                obj.GetComponent<GrabNewObject>().intManager = InteractableManager;
+                // obj.GetComponent<GrabNewObject>().intManager = InteractableManager;
+                obj.GetComponent<GrabNewObject>().Initialize(InteractableManager);
             });
     }
     public void DestroyIngredients()
