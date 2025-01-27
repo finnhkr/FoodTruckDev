@@ -126,6 +126,8 @@ public class GameManager : MonoBehaviour
 
         }
     }
+    // Current TimeMode time duration;
+    public int playTimeDuration = 0;
     private int userScore = 0;
     public int UserScore
     {
@@ -367,11 +369,6 @@ public class GameManager : MonoBehaviour
 
             }
         });
-        // TextMeshProUGUI scoreText = gameInfo.transform.Find("Info/Score/currentScore").GetComponent<TextMeshProUGUI>();
-        // if (!scoreText.IsUnityNull())
-        // {
-        //     scoreText.text = userScore.ToString();
-        // }
     }
 
 
@@ -430,7 +427,7 @@ public class GameManager : MonoBehaviour
         if (currentMode == GameConstants.MODE_TIMEATTACK)
         {
             // default Time 70s;
-            countdownTime = 50;
+            countdownTime = playTimeDuration;
         }
         // Close startScreen
         startScreen.SetActive(false);

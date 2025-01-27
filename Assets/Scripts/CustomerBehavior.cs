@@ -88,10 +88,10 @@ public class CustomerBehavior : MonoBehaviour
                   && navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance
                   && navMeshAgent.pathStatus != NavMeshPathStatus.PathInvalid;
         // Reach to the wait point
-        if (Vector3.Distance(navMeshAgent.destination, navMeshAgent.nextPosition) > Mathf.Epsilon)
-        {
-            Debug.Log($"Customer #{myID} Reached {hasReached} {currentState} {hasReachedDestination} Distance {Vector3.Distance(navMeshAgent.destination, navMeshAgent.nextPosition)} {navMeshAgent.pathPending}");
-        }
+        // if (Vector3.Distance(navMeshAgent.destination, navMeshAgent.nextPosition) > Mathf.Epsilon)
+        // {
+        //      Debug.Log($"Customer #{myID} Reached {hasReached} {currentState} {hasReachedDestination} Distance {Vector3.Distance(navMeshAgent.destination, navMeshAgent.nextPosition)} {navMeshAgent.pathPending}");
+        // }
 
         if (hasReached)
         {
