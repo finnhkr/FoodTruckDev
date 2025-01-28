@@ -251,6 +251,10 @@ public class GameManager : MonoBehaviour
                     if (order.products[submitFood] <= 0)
                     {
                         UserScore += 25; //maybe need to differentiate score by food turned in?
+                        if (Playmode == 0)
+                        {
+                            UserScore += (int)Mathf.Floor(((float)playTimeDuration - countdownTime) / 5);
+                        }
                         gainPointsAudioSource.Play();
                         order.products.Remove(submitFood);
                     }

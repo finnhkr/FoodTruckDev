@@ -44,10 +44,11 @@ public class StartUIScript : MonoBehaviour
     {
 
         string currentMode = modeToggleGroup.ActiveToggles().ToArray()[0].gameObject.name.Trim();
-        string currentTimeDuration = timeDurationSelectGroup.ActiveToggles().ToArray()[0].gameObject.name.Trim();
-        Debug.Log($"Current Mode:{currentMode} timeDuration:{currentTimeDuration}");
+
         if (currentMode == "TimeMode")
         {
+            string currentTimeDuration = timeDurationSelectGroup.ActiveToggles().ToArray()[0].gameObject.name.Trim();
+            Debug.Log($"Current Mode:{currentMode} timeDuration:{currentTimeDuration}");
             // 0->Time Attack
             GameManager.Instance.Playmode = GameConstants.MODE_TIMEATTACK;
             if (currentTimeDuration == "Time0")
