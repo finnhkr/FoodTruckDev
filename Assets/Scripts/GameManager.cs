@@ -170,22 +170,16 @@ public class GameManager : MonoBehaviour
         gameInfo = ui.transform.Find("GameInfo").gameObject;
 
         returnStartScreen();
-        // endScreen.SetActive(false);
-        // gameInfo.SetActive(false);
-        // gameScene.transform.Find("Spawner").gameObject.SetActive(false);
-
-        // // disable User moving for start, end and etc. -> like settings?
-        // LockPlayerMovement();
-
-
     }
+
+
     public void returnStartScreen()
     {
         startScreen.SetActive(true);
         gameInfo.SetActive(false);
         endScreen.SetActive(false);
-        gameScene.transform.Find("Spawner").gameObject.SetActive(true);
-        //LockPlayerMovement();
+
+        //gameScene.transform.Find("Spawner").gameObject.SetActive(false);
 
 
     }
@@ -202,6 +196,7 @@ public class GameManager : MonoBehaviour
                 if (countdownTime > 0)
                 {
                     TextMeshProUGUI clock = gameInfo.transform.Find("Info/Clock/countDown").GetComponent<TextMeshProUGUI>();
+
                     if (!clock.IsUnityNull())
                     {
                         int minutes = (int)(countdownTime / 60);
@@ -223,16 +218,18 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+
+
     // Get food name list for submit.
     public void RecieveHandedInOrder(List<string> tmp)
     {
         handedInFood = tmp;
 
-        // invoke to process current submit order;
         EvaluateFood(tmp);
 
-        // state = gameState.EvaluateOrder;
     }
+
+
     // Evaluate food for submission to get score;
     public void EvaluateFood(List<string> tmp)
     {
@@ -251,6 +248,7 @@ public class GameManager : MonoBehaviour
                     if (order.products[submitFood] <= 0)
                     {
                         UserScore += 25; //maybe need to differentiate score by food turned in?
+
                         if (Playmode == 0)
                         {
                             UserScore += (int)Mathf.Floor(((float)playTimeDuration - countdownTime) / 5);
@@ -307,6 +305,7 @@ public class GameManager : MonoBehaviour
             // orderInfo.transform.localScale = Vector3.one;
             orderInfo.name = orderInfo.name.Replace("(Clone)", "");
             orderInfo.transform.Find("waitPoint").GetComponent<TextMeshProUGUI>().text = currentOrder.waitPointName;
+
             foreach (KeyValuePair<string, int> kvp in currentOrder.products)
             {
                 GameObject orderDetail = Instantiate(orderDetailContainer);
@@ -412,17 +411,17 @@ public class GameManager : MonoBehaviour
         orderListInfo.remainingOrderList.Add(orderInfo);
         Debug.Log($"Generate New Order in {waitPoint.name}\n\nOrder Info:\n\n{string.Join("", orderInfo.products.Select(o => $"{o.Key}*{o.Value}\n"))}");
         GenerateOrderBoard();
-        // Test order;
-        StartCoroutine(MockCompleteOrder(waitPoint.name, 3f, 8f));
     }
 
     public void StartGame()
     {
         // Set initial score
         UserScore = 0;
+
         // Initialize order List
         orderListInfo.currentOrderList = new List<GameConstants.orderInfo>();
         orderListInfo.remainingOrderList = new List<GameConstants.orderInfo>();
+
         // Debug for verify if correct params are passed to game manager.
         Debug.Log($"Current Mode:{(currentMode == GameConstants.MODE_TIMEATTACK ? "Time Attack" : "EndlessMode")}, Food Selections: {string.Join(", ", foodList.Select(p => p.name))}");
 
@@ -430,7 +429,6 @@ public class GameManager : MonoBehaviour
 
         if (currentMode == GameConstants.MODE_TIMEATTACK)
         {
-            // default Time 70s;
             countdownTime = playTimeDuration;
         }
         // Close startScreen
@@ -448,15 +446,13 @@ public class GameManager : MonoBehaviour
             gameInfo.transform.Find("Info/EndGame").gameObject.SetActive(true);
         }
 
-        // Active Spawner and arrange the ingredients there by invoke the function SpawnIngredients
-        GameObject spawner = gameScene.transform.Find("Spawner").gameObject;
-        spawner.SetActive(true);
-        spawner.GetComponent<Spawner>().SpawnIngredients(foodList);
-        // unlock player Movement for game playing.
-        //UnlockPlayerMovement();
+        gameScene.transform.Find("Spawner").gameObject.SetActive(true);
+
         gameInfo.GetComponent<OrderManager>().StartGenerate();
+
         // no use for now.
         state = gameState.CreateOrder;
+
         // Clear the order Board;
         GenerateOrderBoard();
     }
@@ -483,8 +479,6 @@ public class GameManager : MonoBehaviour
     // Clean generated objects
     public void cleanUpGameScene()
     {
-        // Destroy ingredients.
-        gameScene.transform.Find("Spawner").gameObject.GetComponent<Spawner>().DestroyIngredients();
         // Stop generating customers;
         gameInfo.GetComponent<OrderManager>().StopGenerate();
         // Clean orders
@@ -499,19 +493,6 @@ public class GameManager : MonoBehaviour
 
 
 
-    // Lock for fixed option screen like start game screen, score screen, etc.
-    public void LockPlayerMovement()
-    {
-        player.GetComponent<TrackedPoseDriver>().enabled = false;
-        player.transform.SetLocalPositionAndRotation(new Vector3(-0.22f, 2, -0.43f), Quaternion.Euler(6, 0, 0));
-    }
-    public void UnlockPlayerMovement()
-    {
-        player.GetComponent<TrackedPoseDriver>().enabled = true;
-        // Why no effect here???
-        player.transform.SetLocalPositionAndRotation(new Vector3(-0.22f, 2, -0.43f), Quaternion.identity);
-
-    }
     // ===================================================================
     // ===================== Mock completion logic ========================
     // ===================================================================

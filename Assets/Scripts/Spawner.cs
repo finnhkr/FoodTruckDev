@@ -5,6 +5,8 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
+
+/*
 public class Spawner : MonoBehaviour
 {
     // Start is called before the first frame update
@@ -73,3 +75,5 @@ public class Spawner : MonoBehaviour
         }
     }
 }
+
+*/
