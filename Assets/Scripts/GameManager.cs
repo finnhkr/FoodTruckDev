@@ -35,6 +35,7 @@ public class GameManager : MonoBehaviour
     {
         if (instance)
             Destroy(gameObject);
+            Debug.LogError("D7");
         else
             instance = this;
 
@@ -153,7 +154,7 @@ public class GameManager : MonoBehaviour
     // UI for display current Score;
     public TMP_Text scoreText;
 
-    // order size control -  adjust according to increasing difficulty for milestone 4, but fixed it now.
+    // order size control
     public int minOrderSize = 1;
     public int maxOrderSize = 2;
     // =====================================================================

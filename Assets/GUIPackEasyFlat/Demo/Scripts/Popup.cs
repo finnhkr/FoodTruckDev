@@ -27,6 +27,7 @@ public class Popup : MonoBehaviour
 
         RemoveBackground();
         StartCoroutine(RunPopupDestroy());
+        Debug.LogError("D2");
     }
 
     // We destroy the popup automatically 0.5 seconds after closing it.
@@ -38,6 +39,7 @@ public class Popup : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         Destroy(m_background);
         Destroy(gameObject);
+        Debug.LogError("D3");
     }
 
     private void AddBackground()

@@ -44,6 +44,7 @@ public class HandInTray : MonoBehaviour
                 Destroy(bottom);
                 Destroy(sausage);
                 Destroy(top);
+                Debug.LogError("D8");
 
                 Instantiate(hotDog, pos, rot);
             }
