@@ -68,6 +68,8 @@ public class GameManager : MonoBehaviour
     private AudioSource losePointsAudioSource;
     [SerializeField]
     private AudioSource gameEndAudioSource;
+    [SerializeField]
+    private AudioSource gameThemeAudioSource;
 
     private GameObject startScreen;
     private GameObject endScreen;
@@ -426,6 +428,7 @@ public class GameManager : MonoBehaviour
         Debug.Log($"Current Mode:{(currentMode == GameConstants.MODE_TIMEATTACK ? "Time Attack" : "EndlessMode")}, Food Selections: {string.Join(", ", foodList.Select(p => p.name))}");
 
         gameStartAudioSource.Play();
+        gameThemeAudioSoure.Play();
 
         if (currentMode == GameConstants.MODE_TIMEATTACK)
         {
@@ -472,6 +475,7 @@ public class GameManager : MonoBehaviour
         }
 
         gameEndAudioSource.Play();
+        gameThemeAudioSoure.Stop();
 
         gameScene.transform.Find("Spawner").gameObject.SetActive(false);
         UserScore = 0;
