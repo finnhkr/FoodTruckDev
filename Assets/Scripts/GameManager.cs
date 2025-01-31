@@ -428,7 +428,7 @@ public class GameManager : MonoBehaviour
         Debug.Log($"Current Mode:{(currentMode == GameConstants.MODE_TIMEATTACK ? "Time Attack" : "EndlessMode")}, Food Selections: {string.Join(", ", foodList.Select(p => p.name))}");
 
         gameStartAudioSource.Play();
-        gameThemeAudioSoure.Play();
+        gameThemeAudioSource.Play();
 
         if (currentMode == GameConstants.MODE_TIMEATTACK)
         {
@@ -475,7 +475,7 @@ public class GameManager : MonoBehaviour
         }
 
         gameEndAudioSource.Play();
-        gameThemeAudioSoure.Stop();
+        gameThemeAudioSource.Stop();
 
         gameScene.transform.Find("Spawner").gameObject.SetActive(false);
         UserScore = 0;
