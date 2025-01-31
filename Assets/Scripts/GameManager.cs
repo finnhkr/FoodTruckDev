@@ -238,7 +238,7 @@ public class GameManager : MonoBehaviour
         // Temporary list to store orders that need removal
         List<GameConstants.orderInfo> ordersToRemove = new List<GameConstants.orderInfo>();
 
-        // Traves remaining order list and record it. //what does traves mean??
+        // Traverses remaining order list and record it
         foreach (var order in orderListInfo.remainingOrderList)
         {
             foreach (string submitFood in tmp)
@@ -251,10 +251,10 @@ public class GameManager : MonoBehaviour
                     {
                         UserScore += 25;
 
-                        if (Playmode == 0)
-                        {
-                            UserScore += (int)Mathf.Floor(((float)playTimeDuration - countdownTime) / 5);
-                        }
+                       //if (Playmode == 0)
+                        //{
+                            //UserScore += (int)Mathf.Floor(((float)playTimeDuration - countdownTime) / 5);
+                        //}
                         gainPointsAudioSource.Play();
                         order.products.Remove(submitFood);
                     }
@@ -276,7 +276,7 @@ public class GameManager : MonoBehaviour
         foreach (var finishedOrder in ordersToRemove)
         {
             string pointName = finishedOrder.waitPointName;
-            UserScore += finishedOrder.difficulty;
+            //UserScore += finishedOrder.difficulty;
 
             // Remove order requests from orderListInfo
             orderListInfo.remainingOrderList.Remove(finishedOrder);
