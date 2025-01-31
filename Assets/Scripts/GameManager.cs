@@ -249,7 +249,7 @@ public class GameManager : MonoBehaviour
                     // If current food request be fulfilled, then remove it.
                     if (order.products[submitFood] <= 0)
                     {
-                        UserScore += 25; //maybe need to differentiate score by food turned in?
+                        UserScore += 25;
 
                         if (Playmode == 0)
                         {
@@ -258,11 +258,11 @@ public class GameManager : MonoBehaviour
                         gainPointsAudioSource.Play();
                         order.products.Remove(submitFood);
                     }
-                    else
-                    { //the turned in object does NOT fufill a current order
-                        UserScore -= 15;
-                        losePointsAudioSource.Play();
-                    }
+                } 
+                else
+                {
+                    UserScore -= 15;
+                    losePointsAudioSource.Play();
                 }
             }
 
