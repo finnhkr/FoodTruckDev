@@ -50,7 +50,6 @@ public class GameManager : MonoBehaviour
     {
         Start,          // Start screen 
         CreateOrder,    // order gets randomly chosen
-        // PrepingOrder,   // Playing state, where player prepares the Food requested by order
         EvaluateOrder,  // Triggered by handing in an order from the player, evaluates success of player and further game state
         End,            // End screen after failing
     }
@@ -185,7 +184,7 @@ public class GameManager : MonoBehaviour
         gameInfo.SetActive(false);
         endScreen.SetActive(false);
 
-        //gameScene.transform.Find("Spawner").gameObject.SetActive(false);
+        gameScene.transform.Find("Spawner").gameObject.SetActive(false);
 
 
     }
