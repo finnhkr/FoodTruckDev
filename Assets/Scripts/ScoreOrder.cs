@@ -13,7 +13,7 @@ public class HandInZone : MonoBehaviour
         List<string> objectsToHandIn = new List<string> { objectName };
         Debug.LogWarning($"{other.gameObject.tag} Handed In");
 
-        GameManager.Instance.RecieveHandedInOrder(objectsToHandIn);
+        //GameManager.Instance.RecieveHandedInOrder(objectsToHandIn);
 
         Destroy(other.gameObject);
         Debug.LogError("D10");

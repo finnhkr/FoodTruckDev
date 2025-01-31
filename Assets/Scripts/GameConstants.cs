@@ -21,8 +21,10 @@ public class GameConstants : MonoBehaviour
     private void Awake()
     {
         if (instance)
+        {
             Destroy(gameObject);
             Debug.LogError("D6");
+        }    
         else
             instance = this;
 

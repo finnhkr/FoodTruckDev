@@ -13,7 +13,7 @@ public class HandInTray : MonoBehaviour
     {
         foodOnTray = new List<GameObject>();
 
-        XRGrabInteractable tmp = GetComponent<XRGrabInteractable>();
+        XRGrabInteractable tmp = gameObject.GetComponent<XRGrabInteractable>();
         tmp.activated.AddListener(HandingIn);
     }
 

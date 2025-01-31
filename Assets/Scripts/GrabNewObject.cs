@@ -49,7 +49,7 @@ public class GrabNewObject : MonoBehaviour
 
     public void grabNewObject(SelectEnterEventArgs arg)
     {
-        GameObject bottom = Instantiate(newObject, new Vector3(0, 0, 0), Quaternion.identity);
+        GameObject bottom = Instantiate(newObject, new Vector3(0, 0, -3), Quaternion.identity);
 
         /*
         if (intManager == null)

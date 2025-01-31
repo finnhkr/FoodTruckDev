@@ -34,8 +34,11 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         if (instance)
+        {
             Destroy(gameObject);
             Debug.LogError("D7");
+        }
+            
         else
             instance = this;
 
