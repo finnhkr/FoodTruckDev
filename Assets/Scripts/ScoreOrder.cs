@@ -16,7 +16,6 @@ public class HandInZone : MonoBehaviour
         GameManager.Instance.RecieveHandedInOrder(objectsToHandIn);
 
         Destroy(other.gameObject);
-        Debug.LogError("D10");
 
         Debug.Log($"Object '{objectName}' handed in and scored!");
     }

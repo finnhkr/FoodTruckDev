@@ -140,7 +140,6 @@ public class CustomerBehavior : MonoBehaviour
                     Debug.Log($"Destroying customer {myID}");
                     navMeshAgent.ResetPath();
                     Destroy(gameObject);
-                    Debug.LogError("D4");
                     break;
                 case CustomerState.InStartPoint:
                     // Not evalutate the navMeshAgent at the starting point, otherwise it will stop at the intiial point

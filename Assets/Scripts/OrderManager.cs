@@ -85,7 +85,6 @@ public class OrderManager : MonoBehaviour
         foreach (Transform child in customerContainer.transform)
         {
             Destroy(child.gameObject);
-            Debug.LogError("D9");
         }
         foreach (var line in waitLines)
         {

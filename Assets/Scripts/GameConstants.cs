@@ -22,7 +22,6 @@ public class GameConstants : MonoBehaviour
     {
         if (instance)
             Destroy(gameObject);
-            Debug.LogError("D6");
         else
             instance = this;
 

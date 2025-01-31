@@ -21,7 +21,6 @@ public class endCollider : MonoBehaviour
         if (cb != null)
         {
             Destroy(cb.gameObject);
-            Debug.LogError("D1");
         }
     }
 }

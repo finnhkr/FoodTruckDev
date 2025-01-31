@@ -35,7 +35,6 @@ public class GameManager : MonoBehaviour
     {
         if (instance)
             Destroy(gameObject);
-            Debug.LogError("D7");
         else
             instance = this;
 
