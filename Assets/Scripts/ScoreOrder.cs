@@ -1,23 +1,36 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit;
 
 public class HandInZone : MonoBehaviour
 {
+    public GameObject hotDog;
+
     private void OnTriggerEnter(Collider other)
     {
-        // Extract object name and pass it to GameManager
-        if (other.gameObject.tag == "Customer") return;
-        string objectName = other.gameObject.name.Replace("(Clone)", "");
+        if (other.gameObject.tag == "Customer")
+        {
+            return;
+        }
 
-        List<string> objectsToHandIn = new List<string> { objectName };
-        Debug.LogWarning($"{other.gameObject.tag} Handed In");
+        if (other.gameObject.tag == "Product")
+        {
+            string objectName = other.gameObject.name.Replace("(Clone)", "");
 
-        //GameManager.Instance.RecieveHandedInOrder(objectsToHandIn);
+            List<string> objectsToHandIn = new List<string> { objectName };
+            Debug.LogWarning($"{other.gameObject.tag} Handed In");
 
-        Destroy(other.gameObject);
-        Debug.LogError("D10");
+            GameManager.Instance.RecieveHandedInOrder(objectsToHandIn);
 
-        Debug.Log($"Object '{objectName}' handed in and scored!");
+            Destroy(other.gameObject);
+
+            Debug.Log($"Object '{objectName}' handed in and scored!");
+        }
+        else
+        {
+            Destroy(other.gameObject);
+        }
     }
 }

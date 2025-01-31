@@ -5,25 +5,21 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 public class HandInTray : MonoBehaviour
 {
-    public List<GameObject> foodOnTray;
+    // public List<GameObject> foodOnTray;
     public GameObject hotDog;
 
     // Start is called before the first frame update
     void Start()
     {
-        foodOnTray = new List<GameObject>();
-
-        XRGrabInteractable tmp = gameObject.GetComponent<XRGrabInteractable>();
-        tmp.activated.AddListener(HandingIn);
+        // foodOnTray = new List<GameObject>();
     }
 
     // hotdog create, by test from the bottom bread.
     public void OnCollisionEnter(Collision collision)
     {
 
-        // It should be change if you want to add sauce to it, but not for milistone 3;
-        // Generate hotdog;
-        if (collision.gameObject.tag == "TransformToHotDog")
+        //if (collision.gameObject.tag == "TransformToHotDog")
+        if (collision.gameObject.name == "HotDogBottom(Clone)")
         {
             GameObject bottom = collision.gameObject;
             GameObject sausage = null;
@@ -44,19 +40,20 @@ public class HandInTray : MonoBehaviour
                 Destroy(bottom);
                 Destroy(sausage);
                 Destroy(top);
-                Debug.LogError("D8");
 
                 Instantiate(hotDog, pos, rot);
             }
         }
 
-
+        /*
         if (collision.gameObject.tag == "Product")
         {
             foodOnTray.Add(collision.gameObject);
         }
+        */
     }
 
+    /*
     public void OnCollisionExit(Collision collision)
     {
         if (collision.gameObject.tag == "Product")
@@ -64,20 +61,5 @@ public class HandInTray : MonoBehaviour
             foodOnTray.Remove(collision.gameObject);
         }
     }
-
-    public void HandingIn(ActivateEventArgs args)
-    {
-        List<string> tmp = new List<string>();
-
-        foreach (GameObject obj in foodOnTray)
-        {
-            tmp.Add(obj.name.Replace("(Clone)", ""));
-            Destroy(obj);
-        }
-        Destroy(gameObject);
-        // Pass the name of the food on the tray to the game manager;
-        GameManager.Instance.RecieveHandedInOrder(tmp);
-
-        foodOnTray.Clear();
-    }
+    */
 }
