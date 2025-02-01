@@ -34,7 +34,11 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         if (instance)
+        {
             Destroy(gameObject);
+            Debug.LogError("D7");
+        }
+            
         else
             instance = this;
 
@@ -46,7 +50,6 @@ public class GameManager : MonoBehaviour
     {
         Start,          // Start screen 
         CreateOrder,    // order gets randomly chosen
-        // PrepingOrder,   // Playing state, where player prepares the Food requested by order
         EvaluateOrder,  // Triggered by handing in an order from the player, evaluates success of player and further game state
         End,            // End screen after failing
     }
@@ -103,7 +106,7 @@ public class GameManager : MonoBehaviour
         set
         {
             foodList = value ?? new List<GameConstants.ProductsOption>();
-            // Debug.Log("User Selections:" + string.Join(",", foodList.Select(p => p.name)));
+            Debug.Log("User Selections:" + string.Join(",", foodList.Select(p => p.name)));
         }
     }
 
@@ -181,7 +184,7 @@ public class GameManager : MonoBehaviour
         gameInfo.SetActive(false);
         endScreen.SetActive(false);
 
-        //gameScene.transform.Find("Spawner").gameObject.SetActive(false);
+        gameScene.transform.Find("Spawner").gameObject.SetActive(false);
 
 
     }
@@ -238,10 +241,9 @@ public class GameManager : MonoBehaviour
         // Temporary list to store orders that need removal
         List<GameConstants.orderInfo> ordersToRemove = new List<GameConstants.orderInfo>();
 
-        // Traverses remaining order list and record it
+        // Traves remaining order list and record it. //what does traves mean??
         foreach (var order in orderListInfo.remainingOrderList)
         {
-            // loop to check sumbitFood
             foreach (string submitFood in tmp)
             {
                 if (order.products.ContainsKey(submitFood))
@@ -252,14 +254,14 @@ public class GameManager : MonoBehaviour
                     {
                         UserScore += 25;
 
-                        //if (Playmode == 0)
-                        //{
-                        //UserScore += (int)Mathf.Floor(((float)playTimeDuration - countdownTime) / 5);
-                        //}
+                        if (Playmode == 0)
+                        {
+                            UserScore += (int)Mathf.Floor(((float)playTimeDuration - countdownTime) / 5);
+                        }
                         gainPointsAudioSource.Play();
                         order.products.Remove(submitFood);
                     }
-                }
+                } 
                 else
                 {
                     UserScore -= 15;
@@ -277,11 +279,12 @@ public class GameManager : MonoBehaviour
         foreach (var finishedOrder in ordersToRemove)
         {
             string pointName = finishedOrder.waitPointName;
-            //UserScore += finishedOrder.difficulty;
+            UserScore += finishedOrder.difficulty;
 
             // Remove order requests from orderListInfo
             orderListInfo.remainingOrderList.Remove(finishedOrder);
             orderListInfo.currentOrderList.RemoveAll(od => od.waitPointName == pointName);
+
             // And then invoke to request for new customer and let current request corresponding
             // customer leave wait point to exit point.
             gameInfo.GetComponent<OrderManager>().finishOrderOnPoint(pointName);
@@ -294,18 +297,11 @@ public class GameManager : MonoBehaviour
     {
         // Delete all current order list;
         GameObject boardContainer = gameInfo.transform.Find("OrderBoard").Find("Viewport/Content").gameObject;
+        LayoutRebuilder.ForceRebuildLayoutImmediate(gameInfo.transform.Find("OrderBoard").gameObject.GetComponent<RectTransform>());
+        LayoutRebuilder.ForceRebuildLayoutImmediate(boardContainer.GetComponent<RectTransform>());
         GameConstants.Instance.ClearChildren(boardContainer);
-        refreshUI();
         // traverse through current order to generate order board;
         // Debug.Log($"Is orderList currentOrder emtpy {orderListInfo.currentOrderList.IsUnityNull()}");
-
-        string test = "";
-        test += $"Current Order List Count: {orderListInfo.currentOrderList.Count}\n\n";
-        foreach (var order in orderListInfo.currentOrderList)
-        {
-            test += $"Customer: {order.customerName} \n\n WaitPoint: {order.waitPointName} \n\n OrderDetails: \n{string.Join(",", order.products.Select(p => $"{p.Key}: {p.Value}"))}\n";
-        }
-        Debug.Log($"detail: {test}");
         orderListInfo.currentOrderList.ForEach(currentOrder =>
         {
             // Instantiate orderContiner first, which include wait Point info
@@ -313,7 +309,7 @@ public class GameManager : MonoBehaviour
             orderInfo.transform.SetParent(boardContainer.transform, false);
             // orderInfo.transform.localScale = Vector3.one;
             orderInfo.name = orderInfo.name.Replace("(Clone)", "");
-            orderInfo.transform.Find("waitPoint").GetComponent<TextMeshProUGUI>().text = currentOrder.customerName + $" ({currentOrder.waitPointName.Substring(currentOrder.waitPointName.Length - 2)})";
+            orderInfo.transform.Find("waitPoint").GetComponent<TextMeshProUGUI>().text = currentOrder.waitPointName;
 
             foreach (KeyValuePair<string, int> kvp in currentOrder.products)
             {
@@ -352,7 +348,7 @@ public class GameManager : MonoBehaviour
                             UnityEngine.ColorUtility.TryParseHtmlString("#1D1D1D", out Color newColor);
                             countText.color = newColor;
                             // Set showing remaining count
-                            remainCountObj.GetComponent<TextMeshProUGUI>().text = $"*{tmp[0].products[kvp.Key]}";
+                            remainCountObj.GetComponent<TextMeshPro>().text = $"*{tmp[0].products[kvp.Key]}";
                         }
                         else
                         {
@@ -381,24 +377,13 @@ public class GameManager : MonoBehaviour
 
             }
         });
-        refreshUI();
-    }
-    public void refreshUI()
-    {
-        // I need to fresh UI because I dont know why does scoreboard not work as I already set vertical Layout Group, it should be ok :)
-        GameObject boardContainer = gameInfo.transform.Find("OrderBoard").Find("Viewport/Content").gameObject;
-        LayoutRebuilder.ForceRebuildLayoutImmediate(gameInfo.transform.Find("OrderBoard").gameObject.GetComponent<RectTransform>());
-        LayoutRebuilder.ForceRebuildLayoutImmediate(boardContainer.GetComponent<RectTransform>());
     }
 
 
 
-    public void GenerateOrder(GameObject waitPoint, string customer)
+    public void GenerateOrder(GameObject waitPoint)
     {
-        // If already have order on dedicate point, then don't generate new order
-        // This issue is because when everytime update the customer queue, each customer will be trigger again to walk to the point
-        // Then there will be duplicate on first row order.
-        if (orderListInfo.currentOrderList.Find(x => x.waitPointName == waitPoint.name) != null) return;
+        Debug.Log($"Generate New Order in {waitPoint.name}");
         GameConstants.orderInfo orderInfo = new GameConstants.orderInfo();
         int orderSize = Random.Range(minOrderSize, maxOrderSize + 1);
         orderInfo.products = new Dictionary<string, int>();
@@ -410,13 +395,12 @@ public class GameManager : MonoBehaviour
             if (availableFoods.Count == 0) break;
             // Add food name to the order;
             int randomIndex = Random.Range(0, availableFoods.Count);
-            orderInfo.products.Add(availableFoods[randomIndex].prefab.name, Random.Range(2, 3));
+            orderInfo.products.Add(availableFoods[randomIndex].prefab.name, Random.Range(1, 2));
             // Remove from List to avoid duplicate;
             availableFoods.RemoveAt(randomIndex);
         }
         // use waitPoint name to uniquely identify the order;
         orderInfo.waitPointName = waitPoint.gameObject.name;
-        orderInfo.customerName = customer;
         // fixed for milistone 3;
         orderInfo.difficulty = 1;
         //  Add new order to order List and remainingOrderList
@@ -429,10 +413,9 @@ public class GameManager : MonoBehaviour
         //     orderListInfo.remainingOrderList = new List<GameConstants.orderInfo>();
         // }
         orderListInfo.currentOrderList.Add(orderInfo);
-        orderListInfo.remainingOrderList.Add(orderInfo.Clone());
-        Debug.Log($"Generate New Order in {waitPoint.name} for {customer} \n\nOrder Info:\n\n{string.Join("", orderInfo.products.Select(o => $"{o.Key}*{o.Value}\n"))}");
+        orderListInfo.remainingOrderList.Add(orderInfo);
+        Debug.Log($"Generate New Order in {waitPoint.name}\n\nOrder Info:\n\n{string.Join("", orderInfo.products.Select(o => $"{o.Key}*{o.Value}\n"))}");
         GenerateOrderBoard();
-        // StartCoroutine(MockCompleteOrder(waitPoint.name));
     }
 
     public void StartGame()
@@ -478,7 +461,6 @@ public class GameManager : MonoBehaviour
 
         // Clear the order Board;
         GenerateOrderBoard();
-
     }
     // End Game
     public void EndGame()
@@ -530,10 +512,9 @@ public class GameManager : MonoBehaviour
     /// <param name="waitPointName">The name of the waitPoint (customer location) to mock completion</param>
     /// <param name="partialDelay">How many seconds to wait before submitting partial items</param>
     /// <param name="finalDelay">After partial submission, how many seconds to wait before fully completing the order</param>
-    public IEnumerator MockCompleteOrder(string waitPointName = "", float partialDelay = 1f, float finalDelay = 5f)
+    public IEnumerator MockCompleteOrder(string waitPointName, float partialDelay = 5f, float finalDelay = 10f)
     {
         // Wait for partialDelay seconds, then submit a part of the order (e.g. one item)
-        // Debug.Log("In mock function");
         yield return new WaitForSeconds(partialDelay);
         // if not found that wait point, then return default one.
         var targetOrder = orderListInfo.remainingOrderList.FirstOrDefault(o => o.waitPointName == waitPointName);

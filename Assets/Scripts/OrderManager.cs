@@ -28,7 +28,6 @@ public class OrderManager : MonoBehaviour
                 var cb = customer.GetComponent<CustomerBehavior>();
                 if (cb != null)
                 {
-                    // Let customer to walk to the point
                     cb.WalkToPoint(wp, i == 0);
                 }
             }
@@ -86,6 +85,7 @@ public class OrderManager : MonoBehaviour
         foreach (Transform child in customerContainer.transform)
         {
             Destroy(child.gameObject);
+            Debug.LogError("D9");
         }
         foreach (var line in waitLines)
         {
@@ -103,13 +103,10 @@ public class OrderManager : MonoBehaviour
             var candidateLines = waitLines.Where(l => !l.IsFull()).ToList();
             if (candidateLines.Count > 0)
             {
-                // Select a line;
                 var targetLine = candidateLines[Random.Range(0, candidateLines.Count)];
-                // Select a random customer
+
                 GameObject prefab = customerPrefabs[Random.Range(0, customerPrefabs.Count)];
-                // Instantiate a new customer;
                 GameObject newCustomer = Instantiate(prefab, startPoint.transform.position, Quaternion.Euler(0, 90, 0));
-                // Set customer to customerContainer;
                 newCustomer.transform.SetParent(customerContainer.transform);
 
                 // Add customer to back of the line

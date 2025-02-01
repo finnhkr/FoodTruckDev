@@ -382,6 +382,7 @@ public class SnapshotCamera : MonoBehaviour
 
         // Destroy the instance we created
         DestroyImmediate(instance);
+        Debug.LogError("D11");
 
         // Return the snapshot
         return snapshot;

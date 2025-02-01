@@ -34,8 +34,8 @@ public class CustomerBehavior : MonoBehaviour
     private CustomerState currentState = CustomerState.InStartPoint;
     void Start()
     {
-        // Debug.Log($"Customer #{myID} - Start()");
-        transform.name = $"{GameConstants.Instance.generateRandomNameForCustomer()}";
+        Debug.Log($"Customer #{myID} - Start()");
+        transform.name = $"Customer #{myID}";
 
         // This is so weird that state switch back to instartpoint after invoke WalkToWaitPoint???
         // currentState = CustomerState.InStartPoint;
@@ -52,7 +52,7 @@ public class CustomerBehavior : MonoBehaviour
         hasReachedDestination = false;
         navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
         // Debug.Log($"WaitPoint {waitPoint} {waitPoint.transform.position} {navMeshAgent.IsUnityNull()}");
-        // Debug.Log($"customer #{myID} at {waitPoint.name} trigger here, distance {Vector3.Distance(waitPoint.transform.position, transform.position)}");
+        Debug.Log($"customer #{myID} at {waitPoint.name} trigger here, distance {Vector3.Distance(waitPoint.transform.position, transform.position)}");
         animator.SetBool("IsWalking", true);
         assignedWaitPoint = waitPoint;
         navMeshAgent.ResetPath();
@@ -64,7 +64,7 @@ public class CustomerBehavior : MonoBehaviour
     // leave food truck
     public void LeaveFoodTruck(GameObject leavePoint)
     {
-        // Debug.Log("Call Leave FoodTruck");
+        Debug.Log("Call Leave FoodTruck");
         hasReachedDestination = false;
         currentState = CustomerState.WalkingToLeavePoint;
         // Trigger finish order to walk animation.
@@ -73,7 +73,7 @@ public class CustomerBehavior : MonoBehaviour
         navMeshAgent.ResetPath();
         navMeshAgent.SetDestination(leavePoint.transform.position);
 
-        // Debug.Log($"Trigger Leave #{myID}");
+        Debug.Log($"Trigger Leave #{myID}");
     }
 
     // Update is called once per frame
@@ -103,7 +103,7 @@ public class CustomerBehavior : MonoBehaviour
                 case CustomerState.WalkingToWaitPoint:
                     if (hasReachedDestination) break;
                     hasReachedDestination = true;
-                    // Debug.Log($"Customer #{myID} HERE");
+                    Debug.Log($"Customer #{myID} HERE");
                     // Debug.Log($"User leave {assignedWaitPoint.name}");
                     // Clear current path, to made it fully stopped;
 
@@ -122,7 +122,7 @@ public class CustomerBehavior : MonoBehaviour
                     {
                         // Only order when in firstRow;
                         // Otherwise maintain current state;
-                        GameManager.Instance.GenerateOrder(assignedWaitPoint, transform.name);
+                        GameManager.Instance.GenerateOrder(assignedWaitPoint);
                         currentState = CustomerState.WaitingForOrder;
                     }
                     else
@@ -130,7 +130,7 @@ public class CustomerBehavior : MonoBehaviour
                         currentState = CustomerState.WaitingInLine;
                         return;
                     }
-                    // Debug.Log($"Customer #{myID} set to Idle");
+                    Debug.Log($"Customer #{myID} set to Idle");
 
                     break;
                 case CustomerState.WaitingForOrder:
@@ -140,10 +140,11 @@ public class CustomerBehavior : MonoBehaviour
                     Debug.Log($"Destroying customer {myID}");
                     navMeshAgent.ResetPath();
                     Destroy(gameObject);
+                    Debug.LogError("D4");
                     break;
                 case CustomerState.InStartPoint:
                     // Not evalutate the navMeshAgent at the starting point, otherwise it will stop at the intiial point
-                    // Debug.Log($"Current In startPoint {assignedWaitPoint.name}");
+                    Debug.Log($"Current In startPoint {assignedWaitPoint.name}");
                     return;
                 case CustomerState.WaitingInLine:
                     return;
