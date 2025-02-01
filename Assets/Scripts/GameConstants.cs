@@ -21,10 +21,7 @@ public class GameConstants : MonoBehaviour
     private void Awake()
     {
         if (instance)
-        {
             Destroy(gameObject);
-            Debug.LogError("D6");
-        }    
         else
             instance = this;
 
@@ -49,9 +46,27 @@ public class GameConstants : MonoBehaviour
     {
         // identifier by using waitpoint name;
         public string waitPointName;
+        public string customerName;
         public Dictionary<string, int> products;
         // difficulty (for different score) - for milestone 4 - I'm tired to add it now ^.&^
         public int difficulty;
+
+        public orderInfo Clone()
+        {
+            orderInfo clone = new orderInfo();
+            clone.waitPointName = waitPointName;
+            clone.customerName = customerName;
+            clone.difficulty = difficulty;
+            clone.products = products != null ? new Dictionary<string, int>(products) : null;
+            return clone;
+
+        }
+    }
+    private string[] firstNames = { "John", "Mary", "James", "Patricia", "Robert", "Jennifer", "Michael", "Linda", "William", "Elizabeth" };
+    private string[] lastNames = { "Smith", "Johnson", "Brown", "Williams", "Jones", "Garcia", "Miller", "Davis", "Martinez", "Hernandez" };
+    public string generateRandomNameForCustomer()
+    {
+        return firstNames[Random.Range(0, firstNames.Length)] + " " + lastNames[Random.Range(0, lastNames.Length)];
     }
     public void ClearChildren(GameObject parent)
     {

@@ -8,7 +8,6 @@ TagManager:
   - Product
   - Drink
   - Customer
-  - Window
   layers:
   - Default
   - TransparentFX
