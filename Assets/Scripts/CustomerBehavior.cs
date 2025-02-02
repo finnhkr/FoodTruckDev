@@ -35,7 +35,7 @@ public class CustomerBehavior : MonoBehaviour
     void Start()
     {
         Debug.Log($"Customer #{myID} - Start()");
-        transform.name = $"Customer #{myID}";
+        transform.name = $"{GameConstants.Instance.generateRandomNameForCustomer()}";
 
         // This is so weird that state switch back to instartpoint after invoke WalkToWaitPoint???
         // currentState = CustomerState.InStartPoint;
@@ -52,7 +52,7 @@ public class CustomerBehavior : MonoBehaviour
         hasReachedDestination = false;
         navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
         // Debug.Log($"WaitPoint {waitPoint} {waitPoint.transform.position} {navMeshAgent.IsUnityNull()}");
-        Debug.Log($"customer #{myID} at {waitPoint.name} trigger here, distance {Vector3.Distance(waitPoint.transform.position, transform.position)}");
+        // Debug.Log($"customer #{myID} at {waitPoint.name} trigger here, distance {Vector3.Distance(waitPoint.transform.position, transform.position)}");
         animator.SetBool("IsWalking", true);
         assignedWaitPoint = waitPoint;
         navMeshAgent.ResetPath();
@@ -64,7 +64,7 @@ public class CustomerBehavior : MonoBehaviour
     // leave food truck
     public void LeaveFoodTruck(GameObject leavePoint)
     {
-        Debug.Log("Call Leave FoodTruck");
+        // Debug.Log("Call Leave FoodTruck");
         hasReachedDestination = false;
         currentState = CustomerState.WalkingToLeavePoint;
         // Trigger finish order to walk animation.
@@ -73,7 +73,7 @@ public class CustomerBehavior : MonoBehaviour
         navMeshAgent.ResetPath();
         navMeshAgent.SetDestination(leavePoint.transform.position);
 
-        Debug.Log($"Trigger Leave #{myID}");
+        // Debug.Log($"Trigger Leave #{myID}");
     }
 
     // Update is called once per frame
@@ -122,7 +122,7 @@ public class CustomerBehavior : MonoBehaviour
                     {
                         // Only order when in firstRow;
                         // Otherwise maintain current state;
-                        GameManager.Instance.GenerateOrder(assignedWaitPoint);
+                        GameManager.Instance.GenerateOrder(assignedWaitPoint, transform.name);
                         currentState = CustomerState.WaitingForOrder;
                     }
                     else

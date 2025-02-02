@@ -34,7 +34,11 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         if (instance)
+        {
             Destroy(gameObject);
+            Debug.LogError("D7");
+        }
+
         else
             instance = this;
 
@@ -46,7 +50,6 @@ public class GameManager : MonoBehaviour
     {
         Start,          // Start screen 
         CreateOrder,    // order gets randomly chosen
-        // PrepingOrder,   // Playing state, where player prepares the Food requested by order
         EvaluateOrder,  // Triggered by handing in an order from the player, evaluates success of player and further game state
         End,            // End screen after failing
     }
@@ -181,7 +184,7 @@ public class GameManager : MonoBehaviour
         gameInfo.SetActive(false);
         endScreen.SetActive(false);
 
-        //gameScene.transform.Find("Spawner").gameObject.SetActive(false);
+        gameScene.transform.Find("Spawner").gameObject.SetActive(false);
 
 
     }
@@ -238,7 +241,7 @@ public class GameManager : MonoBehaviour
         // Temporary list to store orders that need removal
         List<GameConstants.orderInfo> ordersToRemove = new List<GameConstants.orderInfo>();
 
-        // Traverses remaining order list and record it
+        // Traves remaining order list and record it. //what does traves mean??
         foreach (var order in orderListInfo.remainingOrderList)
         {
             foreach (string submitFood in tmp)
@@ -251,14 +254,14 @@ public class GameManager : MonoBehaviour
                     {
                         UserScore += 25;
 
-                       //if (Playmode == 0)
-                        //{
-                            //UserScore += (int)Mathf.Floor(((float)playTimeDuration - countdownTime) / 5);
-                        //}
+                        if (Playmode == 0)
+                        {
+                            UserScore += (int)Mathf.Floor(((float)playTimeDuration - countdownTime) / 5);
+                        }
                         gainPointsAudioSource.Play();
                         order.products.Remove(submitFood);
                     }
-                } 
+                }
                 else
                 {
                     UserScore -= 15;
@@ -276,7 +279,7 @@ public class GameManager : MonoBehaviour
         foreach (var finishedOrder in ordersToRemove)
         {
             string pointName = finishedOrder.waitPointName;
-            //UserScore += finishedOrder.difficulty;
+            UserScore += finishedOrder.difficulty;
 
             // Remove order requests from orderListInfo
             orderListInfo.remainingOrderList.Remove(finishedOrder);
@@ -306,7 +309,7 @@ public class GameManager : MonoBehaviour
             orderInfo.transform.SetParent(boardContainer.transform, false);
             // orderInfo.transform.localScale = Vector3.one;
             orderInfo.name = orderInfo.name.Replace("(Clone)", "");
-            orderInfo.transform.Find("waitPoint").GetComponent<TextMeshProUGUI>().text = currentOrder.waitPointName;
+            orderInfo.transform.Find("waitPoint").GetComponent<TextMeshProUGUI>().text = currentOrder.customerName + $" ({currentOrder.waitPointName.Substring(currentOrder.waitPointName.Length - 2)})";
 
             foreach (KeyValuePair<string, int> kvp in currentOrder.products)
             {
@@ -345,7 +348,7 @@ public class GameManager : MonoBehaviour
                             UnityEngine.ColorUtility.TryParseHtmlString("#1D1D1D", out Color newColor);
                             countText.color = newColor;
                             // Set showing remaining count
-                            remainCountObj.GetComponent<TextMeshPro>().text = $"*{tmp[0].products[kvp.Key]}";
+                            remainCountObj.GetComponent<TextMeshProUGUI>().text = $"*{tmp[0].products[kvp.Key]}";
                         }
                         else
                         {
@@ -378,9 +381,10 @@ public class GameManager : MonoBehaviour
 
 
 
-    public void GenerateOrder(GameObject waitPoint)
+    public void GenerateOrder(GameObject waitPoint, string customer)
     {
         Debug.Log($"Generate New Order in {waitPoint.name}");
+        if (orderListInfo.currentOrderList.Find(x => x.waitPointName == waitPoint.name) != null) return;
         GameConstants.orderInfo orderInfo = new GameConstants.orderInfo();
         int orderSize = Random.Range(minOrderSize, maxOrderSize + 1);
         orderInfo.products = new Dictionary<string, int>();
@@ -392,7 +396,7 @@ public class GameManager : MonoBehaviour
             if (availableFoods.Count == 0) break;
             // Add food name to the order;
             int randomIndex = Random.Range(0, availableFoods.Count);
-            orderInfo.products.Add(availableFoods[randomIndex].prefab.name, Random.Range(1, 2));
+            orderInfo.products.Add(availableFoods[randomIndex].prefab.name, Random.Range(1, 3));
             // Remove from List to avoid duplicate;
             availableFoods.RemoveAt(randomIndex);
         }
@@ -400,6 +404,7 @@ public class GameManager : MonoBehaviour
         orderInfo.waitPointName = waitPoint.gameObject.name;
         // fixed for milistone 3;
         orderInfo.difficulty = 1;
+        orderInfo.customerName = customer;
         //  Add new order to order List and remainingOrderList
         // if (orderListInfo.currentOrderList.IsUnityNull())
         // {
@@ -410,8 +415,9 @@ public class GameManager : MonoBehaviour
         //     orderListInfo.remainingOrderList = new List<GameConstants.orderInfo>();
         // }
         orderListInfo.currentOrderList.Add(orderInfo);
-        orderListInfo.remainingOrderList.Add(orderInfo);
+        orderListInfo.remainingOrderList.Add(orderInfo.Clone());
         Debug.Log($"Generate New Order in {waitPoint.name}\n\nOrder Info:\n\n{string.Join("", orderInfo.products.Select(o => $"{o.Key}*{o.Value}\n"))}");
+        StartCoroutine(MockCompleteOrder(waitPoint.name));
         GenerateOrderBoard();
     }
 
@@ -509,7 +515,7 @@ public class GameManager : MonoBehaviour
     /// <param name="waitPointName">The name of the waitPoint (customer location) to mock completion</param>
     /// <param name="partialDelay">How many seconds to wait before submitting partial items</param>
     /// <param name="finalDelay">After partial submission, how many seconds to wait before fully completing the order</param>
-    public IEnumerator MockCompleteOrder(string waitPointName, float partialDelay = 5f, float finalDelay = 10f)
+    public IEnumerator MockCompleteOrder(string waitPointName, float partialDelay = 2f, float finalDelay = 5f)
     {
         // Wait for partialDelay seconds, then submit a part of the order (e.g. one item)
         yield return new WaitForSeconds(partialDelay);
