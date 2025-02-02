@@ -240,17 +240,24 @@ public class GameManager : MonoBehaviour
     {
         // Temporary list to store orders that need removal
         List<GameConstants.orderInfo> ordersToRemove = new List<GameConstants.orderInfo>();
-
+        // Convert submit food List to dictionary to mark if current submit food already been counted.
+        // bool for if current food been checked, false for default to indicate the food is not counted yet.
+        // Dictionary<string, bool> submitFoodDict = Enumerable.Range(0, tmp.Count).ToDictionary(index => tmp[index], index => false);
+        // Use List with Keyvalue Pair to supplant Dictionary for duplicate food.
+        List<KeyValuePair<string, bool>> submitFoodList = tmp.Select(food => new KeyValuePair<string, bool>(food, false)).ToList();
         // Traves remaining order list and record it. //what does traves mean??
         foreach (var order in orderListInfo.remainingOrderList)
         {
-            foreach (string submitFood in tmp)
+            for (int i = 0; i < submitFoodList.Count; i++)
             {
-                if (order.products.ContainsKey(submitFood))
+                // Already been counted.
+                if (submitFoodList[i].Value) continue;
+                string foodName = submitFoodList[i].Key;
+                if (order.products.ContainsKey(foodName))
                 {
-                    order.products[submitFood] -= 1;
+                    order.products[foodName] -= 1;
                     // If current food request be fulfilled, then remove it.
-                    if (order.products[submitFood] <= 0)
+                    if (order.products[foodName] <= 0)
                     {
                         UserScore += 25;
 
@@ -259,20 +266,83 @@ public class GameManager : MonoBehaviour
                             UserScore += (int)Mathf.Floor(((float)playTimeDuration - countdownTime) / 5);
                         }
                         gainPointsAudioSource.Play();
-                        order.products.Remove(submitFood);
+                        order.products.Remove(foodName);
                     }
-                }
-                else
-                {
-                    UserScore -= 15;
-                    losePointsAudioSource.Play();
+                    // Replace the Value
+                    submitFoodList[i] = new KeyValuePair<string, bool>(foodName, true);
                 }
             }
+            // foreach (string key in submitFoodDict.Keys.ToList())
+            // {
+            //     if (!submitFoodDict[key])
+            //     {
+            //         // Food not been counted yet.
+            //         if (order.products.ContainsKey(key))
+            //         {
+            //             order.products[key] -= 1;
+            //             // If current food request be fulfilled, then remove it.
+            //             if (order.products[key] <= 0)
+            //             {
+            //                 UserScore += 25;
+
+            //                 if (Playmode == 0)
+            //                 {
+            //                     UserScore += (int)Mathf.Floor(((float)playTimeDuration - countdownTime) / 5);
+            //                 }
+            //                 gainPointsAudioSource.Play();
+            //                 order.products.Remove(key);
+            //             }
+            //             submitFoodDict[key] = true;
+            //         }
+            //         // Because prevous logic is to deduct the score if not found the food in one of the order,
+            //         // which is weird because we may also found the submit food in any other orders
+            //         // So only check if submit food is wrong outside the orders loop.
+            //         // else
+            //         // {
+            //         //     UserScore -= 15;
+            //         //     losePointsAudioSource.Play();
+            //         // }
+            //     }
+            // }
+            // foreach (string submitFood in tmp)
+            // {
+            //     if (order.products.ContainsKey(submitFood))
+            //     {
+            //         order.products[submitFood] -= 1;
+            //         // If current food request be fulfilled, then remove it.
+            //         if (order.products[submitFood] <= 0)
+            //         {
+            //             UserScore += 25;
+
+            //             if (Playmode == 0)
+            //             {
+            //                 UserScore += (int)Mathf.Floor(((float)playTimeDuration - countdownTime) / 5);
+            //             }
+            //             gainPointsAudioSource.Play();
+            //             order.products.Remove(submitFood);
+            //         }
+            //     }
+            //     else
+            //     {
+            //         UserScore -= 15;
+            //         losePointsAudioSource.Play();
+            //     }
+            // }
 
             // If order finished, record to remove later;
             if (order.products.Count == 0)
             {
                 ordersToRemove.Add(order);
+            }
+        }
+        foreach (var key in submitFoodList)
+        {
+            // Check if there has any wrong order, if value if false,then food haven't been counted;
+            if (!key.Value)
+            {
+                // If this food haven't been checked means this food is wrong.
+                UserScore -= 15;
+                losePointsAudioSource.Play();
             }
         }
         // execute remove and leave animation together.
