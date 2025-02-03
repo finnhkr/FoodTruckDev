@@ -487,7 +487,7 @@ public class GameManager : MonoBehaviour
         orderListInfo.currentOrderList.Add(orderInfo);
         orderListInfo.remainingOrderList.Add(orderInfo.Clone());
         Debug.Log($"Generate New Order in {waitPoint.name}\n\nOrder Info:\n\n{string.Join("", orderInfo.products.Select(o => $"{o.Key}*{o.Value}\n"))}");
-        StartCoroutine(MockCompleteOrder(waitPoint.name));
+        // StartCoroutine(MockCompleteOrder(waitPoint.name));
         GenerateOrderBoard();
     }
 
